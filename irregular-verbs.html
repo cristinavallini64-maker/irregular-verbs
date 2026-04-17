@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Irregular Verbs — Studio & Pratica</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0e0e;
+    --surface: #1a1918;
+    --surface2: #242220;
+    --border: #2e2c2a;
+    --accent: #e8c547;
+    --accent2: #e87d47;
+    --accent3: #47c5a8;
+    --accent4: #a78bfa;
+    --text: #f0ece4;
+    --text-dim: #8a8278;
+    --text-muted: #4a4744;
+    --correct: #4ade80;
+    --wrong: #f87171;
+    --radius: 12px;
+    --radius-sm: 6px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* HEADER */
+  header {
+    padding: 24px 32px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    letter-spacing: -0.3px;
+    color: var(--accent);
+  }
+
+  .logo span { color: var(--text-dim); font-style: italic; }
+
+  .header-meta {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.5px;
+  }
+
+  /* NAV TABS */
+  .nav-tabs {
+    display: flex;
+    gap: 4px;
+    padding: 20px 32px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .tab {
+    padding: 10px 20px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: all 0.2s;
+    letter-spacing: 0.3px;
+  }
+
+  .tab:hover { color: var(--text-dim); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* MAIN CONTENT */
+  main { padding: 28px 32px; max-width: 900px; margin: 0 auto; }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* GROUP SELECTOR */
+  .group-intro {
+    margin-bottom: 24px;
+  }
+
+  .group-intro h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .group-intro p {
+    color: var(--text-dim);
+    font-size: 14px;
+  }
+
+  .groups-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+
+  .group-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .group-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    border-radius: 3px 0 0 3px;
+  }
+
+  .group-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-1px);
+  }
+
+  .group-card.selected {
+    border-color: var(--accent);
+    background: var(--surface2);
+  }
+
+  .group-card .pattern {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+
+  .group-card .group-name {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 3px;
+  }
+
+  .group-card .group-count {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .group-card .group-example {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: 'DM Mono', monospace;
+    margin-top: 6px;
+  }
+
+  /* Color per gruppo */
+  .g1::before { background: var(--accent); }
+  .g1 .pattern { color: var(--accent); }
+  .g2::before { background: var(--accent2); }
+  .g2 .pattern { color: var(--accent2); }
+  .g3::before { background: var(--accent3); }
+  .g3 .pattern { color: var(--accent3); }
+  .g4::before { background: var(--accent4); }
+  .g4 .pattern { color: var(--accent4); }
+  .g5::before { background: #60a5fa; }
+  .g5 .pattern { color: #60a5fa; }
+  .g6::before { background: #f472b6; }
+  .g6 .pattern { color: #f472b6; }
+
+  .select-all-btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    padding: 8px 16px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-dim);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    margin-bottom: 20px;
+    transition: all 0.2s;
+  }
+  .select-all-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* STUDY TABLE */
+  .study-table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 20px;
+  }
+
+  .study-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  .study-table thead th {
+    background: var(--surface2);
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .study-table tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+
+  .study-table tbody tr:last-child { border-bottom: none; }
+  .study-table tbody tr:hover { background: var(--surface); }
+
+  .study-table td {
+    padding: 10px 16px;
+    vertical-align: middle;
+  }
+
+  .td-it { color: var(--text-dim); font-size: 13px; }
+  .td-base { font-weight: 600; color: var(--text); }
+  .td-forms { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--text-dim); }
+
+  .group-label {
+    display: inline-block;
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    font-weight: 500;
+    padding: 2px 7px;
+    border-radius: 20px;
+    letter-spacing: 0.3px;
+  }
+
+  .gl-aaa { background: rgba(232,197,71,0.15); color: var(--accent); }
+  .gl-abb { background: rgba(232,125,71,0.15); color: var(--accent2); }
+  .gl-abc { background: rgba(71,197,168,0.15); color: var(--accent3); }
+  .gl-abbc { background: rgba(167,139,250,0.15); color: var(--accent4); }
+  .gl-double { background: rgba(96,165,250,0.15); color: #60a5fa; }
+  .gl-modal { background: rgba(244,114,182,0.15); color: #f472b6; }
+
+  /* ACTIONS */
+  .action-bar {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 10px 22px;
+    border-radius: var(--radius-sm);
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.2px;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #0f0e0e;
+  }
+  .btn-primary:hover { background: #f0d060; transform: translateY(-1px); }
+
+  .btn-secondary {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+  }
+  .btn-secondary:hover { border-color: var(--text-dim); color: var(--text); }
+
+  .btn-danger {
+    background: transparent;
+    border: 1px solid rgba(248,113,113,0.3);
+    color: var(--wrong);
+  }
+  .btn-danger:hover { background: rgba(248,113,113,0.1); }
+
+  /* PRACTICE */
+  .practice-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .progress-bar-wrap {
+    flex: 1;
+    min-width: 200px;
+    background: var(--surface2);
+    border-radius: 20px;
+    height: 6px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 20px;
+    transition: width 0.4s ease;
+  }
+
+  .progress-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  .score-display {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+
+  /* VERB CARD */
+  .verb-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 32px;
+    margin-bottom: 20px;
+    animation: slideIn 0.3s ease;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .verb-card .verb-it {
+    font-family: 'DM Serif Display', serif;
+    font-size: 32px;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .verb-card .verb-hint {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 28px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .inputs-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  @media (max-width: 600px) {
+    .inputs-row { grid-template-columns: 1fr; }
+  }
+
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .input-group label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .verb-input {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    font-family: 'DM Mono', monospace;
+    font-size: 15px;
+    color: var(--text);
+    outline: none;
+    transition: all 0.2s;
+    width: 100%;
+  }
+
+  .verb-input:focus {
+    border-color: var(--accent);
+    background: var(--bg);
+  }
+
+  .verb-input.correct {
+    border-color: var(--correct);
+    background: rgba(74,222,128,0.06);
+    color: var(--correct);
+  }
+
+  .verb-input.wrong {
+    border-color: var(--wrong);
+    background: rgba(248,113,113,0.06);
+    color: var(--wrong);
+  }
+
+  .feedback-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+    min-height: 20px;
+  }
+
+  @media (max-width: 600px) {
+    .feedback-row { grid-template-columns: 1fr; }
+  }
+
+  .feedback-item {
+    font-size: 12px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .feedback-item.correct { color: var(--correct); }
+  .feedback-item.wrong { color: var(--wrong); }
+  .feedback-item .correct-answer { font-weight: 600; }
+
+  /* RESULTS */
+  .results-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 40px;
+    text-align: center;
+  }
+
+  .results-score {
+    font-family: 'DM Serif Display', serif;
+    font-size: 72px;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .results-label {
+    font-size: 14px;
+    color: var(--text-dim);
+    margin-bottom: 32px;
+  }
+
+  .results-breakdown {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+  }
+
+  .breakdown-item {
+    text-align: center;
+  }
+
+  .breakdown-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 28px;
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+
+  .breakdown-num.green { color: var(--correct); }
+  .breakdown-num.red { color: var(--wrong); }
+
+  .breakdown-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+  }
+
+  /* WRONG LIST */
+  .wrong-list {
+    margin-top: 28px;
+    text-align: left;
+    border-top: 1px solid var(--border);
+    padding-top: 24px;
+  }
+
+  .wrong-list h3 {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+  }
+
+  .wrong-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .wrong-item:last-child { border-bottom: none; }
+
+  .wi-it { font-size: 14px; color: var(--text-dim); min-width: 120px; }
+  .wi-your { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--wrong); }
+  .wi-correct { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--correct); font-weight: 600; }
+
+  /* EMPTY STATE */
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-muted);
+  }
+  .empty-state .big { font-size: 48px; margin-bottom: 12px; }
+  .empty-state p { font-size: 15px; }
+
+  /* SHUFFLE BADGE */
+  .shuffle-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    color: var(--text-muted);
+    padding: 4px 10px;
+    background: var(--surface2);
+    border-radius: 20px;
+    border: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Irregular Verbs <span>/ studio</span></div>
+  <div class="header-meta">98 verbi · 6 gruppi</div>
+</header>
+
+<div class="nav-tabs">
+  <button class="tab active" onclick="showSection('study')">📖 Studio</button>
+  <button class="tab" onclick="showSection('practice')">✏️ Pratica</button>
+</div>
+
+<main>
+
+  <!-- STUDY SECTION -->
+  <div id="study" class="section active">
+    <div class="group-intro">
+      <h2>Studia i verbi</h2>
+      <p>Seleziona uno o più gruppi per ripassare le forme. Puoi anche vedere tutti i verbi insieme.</p>
+    </div>
+
+    <div class="groups-grid" id="groupsGrid"></div>
+
+    <button class="select-all-btn" onclick="toggleAll()">Seleziona / deseleziona tutti</button>
+
+    <div id="studyTableWrap" class="study-table-wrap">
+      <table class="study-table">
+        <thead>
+          <tr>
+            <th>Gruppo</th>
+            <th>Italiano</th>
+            <th>Base form</th>
+            <th>Past simple</th>
+            <th>Past participle</th>
+          </tr>
+        </thead>
+        <tbody id="studyTableBody"></tbody>
+      </table>
+    </div>
+
+    <div class="action-bar">
+      <button class="btn btn-primary" onclick="startPractice()">Inizia pratica →</button>
+    </div>
+  </div>
+
+  <!-- PRACTICE SECTION -->
+  <div id="practice" class="section">
+    <div id="practiceSetup">
+      <div class="group-intro">
+        <h2>Pratica</h2>
+        <p>Scegli i gruppi su cui vuoi esercitarti e l'ordine.</p>
+      </div>
+      <div class="groups-grid" id="practiceGroupsGrid"></div>
+      <button class="select-all-btn" onclick="toggleAllPractice()">Seleziona / deseleziona tutti</button>
+      <div class="action-bar">
+        <button class="btn btn-primary" onclick="beginPractice()">Inizia →</button>
+        <span class="shuffle-badge">🔀 ordine casuale</span>
+      </div>
+    </div>
+
+    <div id="practiceActive" style="display:none">
+      <div class="practice-header">
+        <div class="progress-bar-wrap">
+          <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+        </div>
+        <div class="progress-text" id="progressText">0 / 0</div>
+        <div class="score-display" id="scoreDisplay">✓ 0 &nbsp; ✗ 0</div>
+      </div>
+
+      <div id="verbCardWrap"></div>
+
+      <div class="action-bar" id="practiceActions">
+        <button class="btn btn-primary" id="checkBtn" onclick="checkAnswer()">Controlla</button>
+        <button class="btn btn-secondary" id="nextBtn" onclick="nextVerb()" style="display:none">Avanti →</button>
+        <button class="btn btn-secondary" onclick="skipVerb()">Salta</button>
+      </div>
+    </div>
+
+    <div id="practiceResults" style="display:none"></div>
+  </div>
+
+</main>
+
+<script>
+const VERBS = [
+  // AAA - tutte e tre le forme uguali
+  {it:"essere", base:"be", ps:"was/were", pp:"been", group:"abbc"},
+  {it:"costare", base:"cost", ps:"cost", pp:"cost", group:"aaa"},
+  {it:"tagliare", base:"cut", ps:"cut", pp:"cut", group:"aaa"},
+  {it:"colpire, picchiare", base:"hit", ps:"hit", pp:"hit", group:"aaa"},
+  {it:"fare male, ferire", base:"hurt", ps:"hurt", pp:"hurt", group:"aaa"},
+  {it:"lasciare, permettere", base:"let", ps:"let", pp:"let", group:"aaa"},
+  {it:"mettere", base:"put", ps:"put", pp:"put", group:"aaa"},
+  {it:"leggere", base:"read", ps:"read", pp:"read", group:"aaa"},
+  {it:"chiudere", base:"shut", ps:"shut", pp:"shut", group:"aaa"},
+  {it:"dividere, spaccare", base:"split", ps:"split", pp:"split", group:"aaa"},
+  {it:"diffondere, spalmare", base:"spread", ps:"spread", pp:"spread", group:"aaa"},
+
+  // ABB - past simple = past participle
+  {it:"battere, picchiare", base:"beat", ps:"beat", pp:"beaten", group:"abb"},
+  {it:"portare", base:"bring", ps:"brought", pp:"brought", group:"abb"},
+  {it:"costruire", base:"build", ps:"built", pp:"built", group:"abb"},
+  {it:"comprare", base:"buy", ps:"bought", pp:"bought", group:"abb"},
+  {it:"prendere, acchiappare", base:"catch", ps:"caught", pp:"caught", group:"abb"},
+  {it:"fare, fabbricare", base:"make", ps:"made", pp:"made", group:"abb"},
+  {it:"trovare", base:"find", ps:"found", pp:"found", group:"abb"},
+  {it:"combattere, litigare", base:"fight", ps:"fought", pp:"fought", group:"abb"},
+  {it:"nutrire, dare da mangiare", base:"feed", ps:"fed", pp:"fed", group:"abb"},
+  {it:"sentire, provare", base:"feel", ps:"felt", pp:"felt", group:"abb"},
+  {it:"avere", base:"have", ps:"had", pp:"had", group:"abb"},
+  {it:"sentire, udire", base:"hear", ps:"heard", pp:"heard", group:"abb"},
+  {it:"tenere, mantenere", base:"keep", ps:"kept", pp:"kept", group:"abb"},
+  {it:"posare, deporre", base:"lay", ps:"laid", pp:"laid", group:"abb"},
+  {it:"guidare, condurre", base:"lead", ps:"led", pp:"led", group:"abb"},
+  {it:"lasciare, partire", base:"leave", ps:"left", pp:"left", group:"abb"},
+  {it:"prestare", base:"lend", ps:"lent", pp:"lent", group:"abb"},
+  {it:"perdere", base:"lose", ps:"lost", pp:"lost", group:"abb"},
+  {it:"significare, voler dire", base:"mean", ps:"meant", pp:"meant", group:"abb"},
+  {it:"incontrare", base:"meet", ps:"met", pp:"met", group:"abb"},
+  {it:"pagare", base:"pay", ps:"paid", pp:"paid", group:"abb"},
+  {it:"dire", base:"say", ps:"said", pp:"said", group:"abb"},
+  {it:"vendere", base:"sell", ps:"sold", pp:"sold", group:"abb"},
+  {it:"mandare, inviare", base:"send", ps:"sent", pp:"sent", group:"abb"},
+  {it:"dormire", base:"sleep", ps:"slept", pp:"slept", group:"abb"},
+  {it:"spendere, trascorrere", base:"spend", ps:"spent", pp:"spent", group:"abb"},
+  {it:"stare in piedi", base:"stand", ps:"stood", pp:"stood", group:"abb"},
+  {it:"spazzare", base:"sweep", ps:"swept", pp:"swept", group:"abb"},
+  {it:"insegnare", base:"teach", ps:"taught", pp:"taught", group:"abb"},
+  {it:"dire, raccontare", base:"tell", ps:"told", pp:"told", group:"abb"},
+  {it:"pensare", base:"think", ps:"thought", pp:"thought", group:"abb"},
+  {it:"capire, comprendere", base:"understand", ps:"understood", pp:"understood", group:"abb"},
+  {it:"vincere", base:"win", ps:"won", pp:"won", group:"abb"},
+  {it:"piegare", base:"bend", ps:"bent", pp:"bent", group:"abb"},
+  {it:"sedersi", base:"sit", ps:"sat", pp:"sat", group:"abb"},
+  {it:"accendere", base:"light", ps:"lit", pp:"lit", group:"abb"},
+
+  // ABC - tutte e tre diverse
+  {it:"diventare", base:"become", ps:"became", pp:"become", group:"abc"},
+  {it:"iniziare, cominciare", base:"begin", ps:"began", pp:"begun", group:"abc"},
+  {it:"mordere", base:"bite", ps:"bit", pp:"bitten", group:"abc"},
+  {it:"soffiare", base:"blow", ps:"blew", pp:"blown", group:"abc"},
+  {it:"rompere", base:"break", ps:"broke", pp:"broken", group:"abc"},
+  {it:"scegliere", base:"choose", ps:"chose", pp:"chosen", group:"abc"},
+  {it:"venire", base:"come", ps:"came", pp:"come", group:"abc"},
+  {it:"disegnare, tirare", base:"draw", ps:"drew", pp:"drawn", group:"abc"},
+  {it:"bere", base:"drink", ps:"drank", pp:"drunk", group:"abc"},
+  {it:"guidare", base:"drive", ps:"drove", pp:"driven", group:"abc"},
+  {it:"mangiare", base:"eat", ps:"ate", pp:"eaten", group:"abc"},
+  {it:"cadere", base:"fall", ps:"fell", pp:"fallen", group:"abc"},
+  {it:"volare", base:"fly", ps:"flew", pp:"flown", group:"abc"},
+  {it:"dimenticare", base:"forget", ps:"forgot", pp:"forgotten", group:"abc"},
+  {it:"perdonare", base:"forgive", ps:"forgave", pp:"forgiven", group:"abc"},
+  {it:"congelare, gelare", base:"freeze", ps:"froze", pp:"frozen", group:"abc"},
+  {it:"ottenere, prendere", base:"get", ps:"got", pp:"got", group:"abc"},
+  {it:"dare", base:"give", ps:"gave", pp:"given", group:"abc"},
+  {it:"andare", base:"go", ps:"went", pp:"gone/been", group:"abc"},
+  {it:"crescere, coltivare", base:"grow", ps:"grew", pp:"grown", group:"abc"},
+  {it:"nascondere", base:"hide", ps:"hid", pp:"hidden", group:"abc"},
+  {it:"tenere, contenere", base:"hold", ps:"held", pp:"held", group:"abc"},
+  {it:"sapere, conoscere", base:"know", ps:"knew", pp:"known", group:"abc"},
+  {it:"correre", base:"run", ps:"ran", pp:"run", group:"abc"},
+  {it:"vedere", base:"see", ps:"saw", pp:"seen", group:"abc"},
+  {it:"scuotere, agitare", base:"shake", ps:"shook", pp:"shaken", group:"abc"},
+  {it:"mostrare", base:"show", ps:"showed", pp:"shown/showed", group:"abc"},
+  {it:"cantare", base:"sing", ps:"sang", pp:"sung", group:"abc"},
+  {it:"affondare", base:"sink", ps:"sank", pp:"sunk", group:"abc"},
+  {it:"parlare", base:"speak", ps:"spoke", pp:"spoken", group:"abc"},
+  {it:"rubare", base:"steal", ps:"stole", pp:"stolen", group:"abc"},
+  {it:"nuotare", base:"swim", ps:"swam", pp:"swum", group:"abc"},
+  {it:"prendere, portare", base:"take", ps:"took", pp:"taken", group:"abc"},
+  {it:"strappare", base:"tear", ps:"tore", pp:"torn", group:"abc"},
+  {it:"lanciare, gettare", base:"throw", ps:"threw", pp:"thrown", group:"abc"},
+  {it:"svegliarsi", base:"wake", ps:"woke", pp:"woken", group:"abc"},
+  {it:"indossare, portare", base:"wear", ps:"wore", pp:"worn", group:"abc"},
+  {it:"scrivere", base:"write", ps:"wrote", pp:"written", group:"abc"},
+  {it:"sparare", base:"shoot", ps:"shot", pp:"shot", group:"abc"},
+  {it:"brillare, risplendere", base:"shine", ps:"shone", pp:"shone", group:"abc"},
+  {it:"alzarsi, sorgere", base:"rise", ps:"rose", pp:"risen", group:"abc"},
+  {it:"cavalcare, andare in bici", base:"ride", ps:"rode", pp:"ridden", group:"abc"},
+  {it:"suonare, telefonare", base:"ring", ps:"rang", pp:"rung", group:"abc"},
+
+  // DOUBLE FORM - varianti burnt/burned ecc.
+  {it:"bruciare", base:"burn", ps:"burnt/burned", pp:"burnt/burned", group:"double"},
+  {it:"sognare", base:"dream", ps:"dreamt/dreamed", pp:"dreamt/dreamed", group:"double"},
+  {it:"imparare", base:"learn", ps:"learnt/learned", pp:"learnt/learned", group:"double"},
+  {it:"annusare, odorare", base:"smell", ps:"smelt/smelled", pp:"smelt/smelled", group:"double"},
+  {it:"compitare, sillabare", base:"spell", ps:"spelt/spelled", pp:"spelt/spelled", group:"double"},
+
+  // SPECIALI
+  {it:"appendere", base:"hang", ps:"hung", pp:"hung", group:"special"},
+  {it:"sdraiarsi", base:"lie", ps:"lay", pp:"lain", group:"special"},
+  {it:"potere (capacità)", base:"can", ps:"could", pp:"been able to", group:"special"},
+  {it:"dovere (obbligo)", base:"must", ps:"had to", pp:"—", group:"special"},
+];
+
+const GROUPS = {
+  aaa:    { name:"AAA — Invariati",       pattern:"A·A·A", color:"g1", label:"gl-aaa", example:"cut · cut · cut", desc:"Tutte e tre le forme uguali" },
+  abb:    { name:"ABB — Past = Participle",pattern:"A·B·B", color:"g2", label:"gl-abb", example:"feel · felt · felt", desc:"Past simple = past participle" },
+  abc:    { name:"ABC — Tutte diverse",   pattern:"A·B·C", color:"g3", label:"gl-abc", example:"sing · sang · sung", desc:"Tutte e tre le forme diverse" },
+  abbc:   { name:"ABBC — Irregolarissimi",pattern:"A·B·C", color:"g4", label:"gl-abbc", example:"be · was/were · been", desc:"Verbi con forme molto irregolari" },
+  double: { name:"Doppia forma",          pattern:"A·B₁/B₂", color:"g5", label:"gl-double", example:"burn · burnt/burned", desc:"Accettano due forme valide" },
+  special:{ name:"Modali & Speciali",     pattern:"speciali", color:"g6", label:"gl-modal", example:"can · could · been able to", desc:"Modali e verbi particolari" },
+};
+
+// State
+let studySelected = new Set(Object.keys(GROUPS));
+let practiceSelected = new Set(Object.keys(GROUPS));
+let practiceQueue = [];
+let currentIdx = 0;
+let correctCount = 0;
+let wrongCount = 0;
+let wrongList = [];
+let checked = false;
+
+// Init
+function init() {
+  renderGroupGrid('groupsGrid', studySelected, toggleStudyGroup);
+  renderGroupGrid('practiceGroupsGrid', practiceSelected, togglePracticeGroup);
+  renderStudyTable();
+}
+
+function renderGroupGrid(containerId, selectedSet, toggleFn) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+  Object.entries(GROUPS).forEach(([key, g]) => {
+    const count = VERBS.filter(v => v.group === key).length;
+    const card = document.createElement('div');
+    card.className = `group-card ${g.color} ${selectedSet.has(key) ? 'selected' : ''}`;
+    card.innerHTML = `
+      <div class="pattern">${g.pattern}</div>
+      <div class="group-name">${g.name}</div>
+      <div class="group-count">${count} verbi</div>
+      <div class="group-example">${g.example}</div>
+    `;
+    card.onclick = () => toggleFn(key);
+    card.dataset.key = key;
+    container.appendChild(card);
+  });
+}
+
+function toggleStudyGroup(key) {
+  if (studySelected.has(key)) studySelected.delete(key);
+  else studySelected.add(key);
+  renderGroupGrid('groupsGrid', studySelected, toggleStudyGroup);
+  renderStudyTable();
+}
+
+function togglePracticeGroup(key) {
+  if (practiceSelected.has(key)) practiceSelected.delete(key);
+  else practiceSelected.add(key);
+  renderGroupGrid('practiceGroupsGrid', practiceSelected, togglePracticeGroup);
+}
+
+function toggleAll() {
+  if (studySelected.size === Object.keys(GROUPS).length) studySelected.clear();
+  else Object.keys(GROUPS).forEach(k => studySelected.add(k));
+  renderGroupGrid('groupsGrid', studySelected, toggleStudyGroup);
+  renderStudyTable();
+}
+
+function toggleAllPractice() {
+  if (practiceSelected.size === Object.keys(GROUPS).length) practiceSelected.clear();
+  else Object.keys(GROUPS).forEach(k => practiceSelected.add(k));
+  renderGroupGrid('practiceGroupsGrid', practiceSelected, togglePracticeGroup);
+}
+
+function renderStudyTable() {
+  const tbody = document.getElementById('studyTableBody');
+  const filtered = VERBS.filter(v => studySelected.has(v.group));
+  if (filtered.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--text-muted)">Seleziona almeno un gruppo</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = filtered.map(v => {
+    const g = GROUPS[v.group];
+    return `<tr>
+      <td><span class="group-label ${g.label}">${g.pattern}</span></td>
+      <td class="td-it">${v.it}</td>
+      <td class="td-base">${v.base}</td>
+      <td class="td-forms">${v.ps}</td>
+      <td class="td-forms">${v.pp}</td>
+    </tr>`;
+  }).join('');
+}
+
+// PRACTICE
+function startPractice() {
+  showSection('practice');
+}
+
+function beginPractice() {
+  const filtered = VERBS.filter(v => practiceSelected.has(v.group));
+  if (filtered.length === 0) { alert('Seleziona almeno un gruppo!'); return; }
+  practiceQueue = shuffle([...filtered]);
+  currentIdx = 0;
+  correctCount = 0;
+  wrongCount = 0;
+  wrongList = [];
+  document.getElementById('practiceSetup').style.display = 'none';
+  document.getElementById('practiceActive').style.display = 'block';
+  document.getElementById('practiceResults').style.display = 'none';
+  showVerb();
+}
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function showVerb() {
+  checked = false;
+  const verb = practiceQueue[currentIdx];
+  const total = practiceQueue.length;
+  document.getElementById('progressFill').style.width = `${(currentIdx / total) * 100}%`;
+  document.getElementById('progressText').textContent = `${currentIdx + 1} / ${total}`;
+  document.getElementById('scoreDisplay').innerHTML = `✓ ${correctCount} &nbsp; ✗ ${wrongCount}`;
+  document.getElementById('checkBtn').style.display = 'inline-block';
+  document.getElementById('nextBtn').style.display = 'none';
+
+  const g = GROUPS[verb.group];
+  document.getElementById('verbCardWrap').innerHTML = `
+    <div class="verb-card">
+      <div class="verb-it">${verb.it}</div>
+      <div class="verb-hint"><span class="group-label ${g.label}">${g.pattern}</span> &nbsp; ${g.name}</div>
+      <div class="inputs-row">
+        <div class="input-group">
+          <label>Base form</label>
+          <input class="verb-input" id="inp-base" placeholder="es. go" autocomplete="off" spellcheck="false" onkeydown="handleKey(event)">
+        </div>
+        <div class="input-group">
+          <label>Past simple</label>
+          <input class="verb-input" id="inp-ps" placeholder="es. went" autocomplete="off" spellcheck="false" onkeydown="handleKey(event)">
+        </div>
+        <div class="input-group">
+          <label>Past participle</label>
+          <input class="verb-input" id="inp-pp" placeholder="es. gone" autocomplete="off" spellcheck="false" onkeydown="handleKey(event)">
+        </div>
+      </div>
+      <div class="feedback-row" id="feedbackRow">
+        <div class="feedback-item" id="fb-base"></div>
+        <div class="feedback-item" id="fb-ps"></div>
+        <div class="feedback-item" id="fb-pp"></div>
+      </div>
+    </div>
+  `;
+  document.getElementById('inp-base').focus();
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter') {
+    if (!checked) checkAnswer();
+    else nextVerb();
+  }
+  if (e.key === 'Tab') {
+    // default tab behaviour is fine
+  }
+}
+
+function normalize(s) {
+  return s.trim().toLowerCase();
+}
+
+function isAccepted(input, correct) {
+  const inp = normalize(input);
+  const variants = correct.split('/').map(s => normalize(s.trim()));
+  return variants.some(v => v === inp);
+}
+
+function checkAnswer() {
+  if (checked) return;
+  checked = true;
+  const verb = practiceQueue[currentIdx];
+  const inpBase = document.getElementById('inp-base').value;
+  const inpPs = document.getElementById('inp-ps').value;
+  const inpPp = document.getElementById('inp-pp').value;
+
+  const okBase = isAccepted(inpBase, verb.base);
+  const okPs = isAccepted(inpPs, verb.ps);
+  const okPp = isAccepted(inpPp, verb.pp);
+  const allOk = okBase && okPs && okPp;
+
+  setFieldResult('inp-base', 'fb-base', okBase, inpBase, verb.base);
+  setFieldResult('inp-ps', 'fb-ps', okPs, inpPs, verb.ps);
+  setFieldResult('inp-pp', 'fb-pp', okPp, inpPp, verb.pp);
+
+  if (allOk) correctCount++;
+  else {
+    wrongCount++;
+    wrongList.push({ verb, inpBase, inpPs, inpPp, okBase, okPs, okPp });
+  }
+
+  document.getElementById('scoreDisplay').innerHTML = `✓ ${correctCount} &nbsp; ✗ ${wrongCount}`;
+  document.getElementById('checkBtn').style.display = 'none';
+  document.getElementById('nextBtn').style.display = 'inline-block';
+}
+
+function setFieldResult(inputId, fbId, ok, userVal, correctVal) {
+  const input = document.getElementById(inputId);
+  const fb = document.getElementById(fbId);
+  if (ok) {
+    input.classList.add('correct');
+    fb.className = 'feedback-item correct';
+    fb.innerHTML = '✓';
+  } else {
+    input.classList.add('wrong');
+    fb.className = 'feedback-item wrong';
+    fb.innerHTML = userVal ? `✗ → <span class="correct-answer">${correctVal}</span>` : `→ <span class="correct-answer">${correctVal}</span>`;
+  }
+}
+
+function nextVerb() {
+  currentIdx++;
+  if (currentIdx >= practiceQueue.length) {
+    showResults();
+  } else {
+    showVerb();
+  }
+}
+
+function skipVerb() {
+  if (!checked) {
+    wrongCount++;
+    const verb = practiceQueue[currentIdx];
+    wrongList.push({ verb, inpBase:'', inpPs:'', inpPp:'', okBase:false, okPs:false, okPp:false });
+  }
+  nextVerb();
+}
+
+function showResults() {
+  document.getElementById('practiceActive').style.display = 'none';
+  const total = practiceQueue.length;
+  const pct = Math.round((correctCount / total) * 100);
+  let emoji = pct >= 80 ? '🎉' : pct >= 60 ? '👍' : '📚';
+
+  let wrongHtml = '';
+  if (wrongList.length > 0) {
+    wrongHtml = `<div class="wrong-list">
+      <h3>Da ripassare (${wrongList.length})</h3>
+      ${wrongList.map(w => `
+        <div class="wrong-item">
+          <div class="wi-it">${w.verb.it}</div>
+          <div class="wi-your">${w.inpBase||'?'} · ${w.inpPs||'?'} · ${w.inpPp||'?'}</div>
+          <div class="wi-correct">${w.verb.base} · ${w.verb.ps} · ${w.verb.pp}</div>
+        </div>
+      `).join('')}
+    </div>`;
+  }
+
+  document.getElementById('practiceResults').style.display = 'block';
+  document.getElementById('practiceResults').innerHTML = `
+    <div class="results-card">
+      <div class="results-score">${pct}%</div>
+      <div class="results-label">${emoji} ${correctCount} corretti su ${total}</div>
+      <div class="results-breakdown">
+        <div class="breakdown-item">
+          <div class="breakdown-num green">${correctCount}</div>
+          <div class="breakdown-label">CORRETTI</div>
+        </div>
+        <div class="breakdown-item">
+          <div class="breakdown-num red">${wrongCount}</div>
+          <div class="breakdown-label">ERRORI</div>
+        </div>
+      </div>
+      ${wrongHtml}
+      <div class="action-bar" style="justify-content:center;margin-top:24px">
+        <button class="btn btn-primary" onclick="retryWrong()">Ripassa gli errori</button>
+        <button class="btn btn-secondary" onclick="resetPractice()">Ricomincia</button>
+      </div>
+    </div>
+  `;
+}
+
+function retryWrong() {
+  if (wrongList.length === 0) return;
+  practiceQueue = shuffle(wrongList.map(w => w.verb));
+  currentIdx = 0;
+  correctCount = 0;
+  wrongCount = 0;
+  wrongList = [];
+  document.getElementById('practiceResults').style.display = 'none';
+  document.getElementById('practiceActive').style.display = 'block';
+  showVerb();
+}
+
+function resetPractice() {
+  document.getElementById('practiceResults').style.display = 'none';
+  document.getElementById('practiceSetup').style.display = 'block';
+}
+
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.tab').forEach(t => {
+    if (t.getAttribute('onclick').includes(id)) t.classList.add('active');
+  });
+}
+
+init();
+</script>
+</body>
+</html>
