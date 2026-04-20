@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VERB QUEST</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-top: #1a1060;
+  --bg-mid: #2d1b8a;
+  --bg-bot: #1a0f4a;
+  --surface: rgba(255,255,255,0.12);
+  --surface-solid: #2a1f7a;
+  --surface2: rgba(255,255,255,0.18);
+  --border: rgba(255,255,255,0.2);
+  --border2: rgba(255,255,255,0.3);
+  --text: #ffffff;
+  --text-dim: rgba(255,255,255,0.75);
+  --text-muted: rgba(255,255,255,0.45);
+  --cyan: #00f0ff;
+  --cyan-dim: rgba(0,240,255,0.18);
+  --cyan-glow: rgba(0,240,255,0.6);
+  --green: #00ff88;
+  --green-dim: rgba(0,255,136,0.18);
+  --green-glow: rgba(0,255,136,0.6);
+  --red: #ff4d6d;
+  --red-dim: rgba(255,77,109,0.18);
+  --gold: #ffcc00;
+  --gold-dim: rgba(255,204,0,0.2);
+  --gold-glow: rgba(255,204,0,0.6);
+  --purple: #dd88ff;
+  --purple-dim: rgba(221,136,255,0.2);
+  --purple-glow: rgba(221,136,255,0.6);
+  --orange: #ff8c42;
+  --radius: 14px;
+  --radius-sm: 7px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  min-height: 100vh;
+  color: var(--text);
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 16px;
+  overflow-x: hidden;
+  position: relative;
+  background: linear-gradient(160deg, #1a1060 0%, #2d1b8a 40%, #4a1060 70%, #1a0f4a 100%);
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 40% at 20% 30%, rgba(100,60,255,0.35) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 35% at 80% 70%, rgba(180,60,200,0.3) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 30% at 60% 10%, rgba(0,200,255,0.2) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+#starCanvas {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+#particleCanvas {
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* HEADER */
+header {
+  position: relative;
+  z-index: 10;
+  padding: 0 24px;
+  height: 62px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(20,10,70,0.7);
+  border-bottom: 1px solid rgba(255,255,255,0.15);
+  backdrop-filter: blur(16px);
+}
+
+header::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--cyan), var(--purple), transparent);
+  opacity: 0.8;
+}
+
+.logo {
+  font-family: 'Orbitron', monospace;
+  font-weight: 900;
+  font-size: 20px;
+  letter-spacing: 5px;
+  background: linear-gradient(135deg, #00f0ff, #ffffff, #dd88ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 10px rgba(0,240,255,0.5));
+}
+
+.logo-sub {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--text-muted);
+  font-family: 'Rajdhani', sans-serif;
+  -webkit-text-fill-color: var(--text-muted);
+  display: block;
+  margin-top: -3px;
+}
+
+.btn-reset {
+  font-family: 'Orbitron', monospace;
+  font-size: 9px;
+  letter-spacing: 1px;
+  padding: 7px 14px;
+  border: 1px solid rgba(255,77,109,0.4);
+  background: rgba(255,77,109,0.08);
+  color: rgba(255,255,255,0.5);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.btn-reset:hover {
+  border-color: var(--red);
+  color: var(--red);
+  background: rgba(255,77,109,0.15);
+  box-shadow: 0 0 14px rgba(255,77,109,0.35);
+}
+
+/* SCREENS */
+.screen {
+  display: none;
+  position: relative;
+  z-index: 2;
+  padding: 24px;
+  max-width: 860px;
+  margin: 0 auto;
+}
+.screen.active { display: block; }
+
+/* MAP HERO */
+.map-hero {
+  text-align: center;
+  padding: 30px 0 22px;
+}
+
+.map-hero h1 {
+  font-family: 'Orbitron', monospace;
+  font-weight: 900;
+  font-size: 44px;
+  letter-spacing: 8px;
+  background: linear-gradient(135deg, #00f0ff 0%, #ffffff 50%, #dd88ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 25px rgba(0,240,255,0.6));
+  animation: titleGlow 3s ease-in-out infinite;
+  margin-bottom: 8px;
+}
+
+@keyframes titleGlow {
+  0%,100% { filter: drop-shadow(0 0 15px rgba(0,240,255,0.5)); }
+  50% { filter: drop-shadow(0 0 35px rgba(0,240,255,0.9)) drop-shadow(0 0 60px rgba(221,136,255,0.4)); }
+}
+
+.map-hero p {
+  color: var(--text-muted);
+  font-size: 13px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+/* XP PANEL */
+.xp-panel {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: var(--radius);
+  padding: 14px 20px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  backdrop-filter: blur(10px);
+}
+
+.xp-label-left {
+  font-family: 'Orbitron', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--text-muted);
+  min-width: 24px;
+}
+
+.xp-track {
+  flex: 1;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 4px;
+  height: 14px;
+  overflow: hidden;
+  position: relative;
+}
+
+.xp-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--cyan), #8800ff, var(--purple));
+  background-size: 200% 100%;
+  border-radius: 4px;
+  transition: width 0.9s cubic-bezier(0.4,0,0.2,1);
+  animation: xpShimmer 2.5s linear infinite;
+  box-shadow: 0 0 10px var(--cyan-glow);
+}
+
+@keyframes xpShimmer {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 200% 0%; }
+}
+
+.xp-fill::after {
+  content: '';
+  position: absolute;
+  top: 0; right: 0;
+  width: 8px; height: 100%;
+  background: white;
+  opacity: 0.7;
+  filter: blur(2px);
+}
+
+.xp-num {
+  font-family: 'Orbitron', monospace;
+  font-size: 12px;
+  color: #ffffff;
+  white-space: nowrap;
+  font-weight: 700;
+}
+
+/* SECTION CARDS */
+.sections-list { display: flex; flex-direction: column; gap: 9px; }
+
+.section-card {
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid;
+  backdrop-filter: blur(8px);
+}
+
+/* glass gloss top */
+.section-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 45%;
+  background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, transparent 100%);
+  pointer-events: none;
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+
+/* LOCKED */
+.section-card.locked {
+  background: rgba(0,0,0,0.25);
+  border-color: rgba(255,255,255,0.08);
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* UNLOCKED */
+.section-card.unlocked {
+  background: linear-gradient(135deg, rgba(0,220,255,0.15) 0%, rgba(100,50,255,0.12) 100%);
+  border-color: rgba(0,240,255,0.5);
+  cursor: pointer;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.3), 0 0 12px rgba(0,240,255,0.2);
+  animation: unlockBreath 3s ease-in-out infinite;
+}
+@keyframes unlockBreath {
+  0%,100% { box-shadow: 0 4px 24px rgba(0,0,0,0.3), 0 0 10px rgba(0,240,255,0.2); }
+  50% { box-shadow: 0 4px 28px rgba(0,0,0,0.3), 0 0 24px rgba(0,240,255,0.45); }
+}
+.section-card.unlocked:hover {
+  transform: translateX(8px) scale(1.01);
+  border-color: var(--cyan);
+  box-shadow: 0 6px 32px rgba(0,0,0,0.4), 0 0 36px rgba(0,240,255,0.5) !important;
+  animation: none;
+}
+
+/* COMPLETED */
+.section-card.completed {
+  background: linear-gradient(135deg, rgba(0,255,136,0.12) 0%, rgba(0,180,100,0.08) 100%);
+  border-color: rgba(0,255,136,0.35);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+  opacity: 0.75;
+}
+
+/* REVISION */
+.section-card.revision {
+  background: linear-gradient(135deg, rgba(255,204,0,0.18) 0%, rgba(255,140,0,0.12) 100%);
+  border-color: rgba(255,204,0,0.6);
+  cursor: pointer;
+  animation: revPulse 2s ease-in-out infinite;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+}
+@keyframes revPulse {
+  0%,100% { box-shadow: 0 4px 24px rgba(0,0,0,0.3), 0 0 12px rgba(255,204,0,0.25); }
+  50% { box-shadow: 0 4px 28px rgba(0,0,0,0.3), 0 0 28px rgba(255,204,0,0.55); }
+}
+.section-card.revision:hover {
+  transform: translateX(8px) scale(1.01);
+  border-color: var(--gold);
+  box-shadow: 0 6px 32px rgba(0,0,0,0.4), 0 0 40px rgba(255,204,0,0.65) !important;
+  animation: none;
+}
+
+.section-card.revision-done {
+  background: linear-gradient(135deg, rgba(0,255,136,0.1), rgba(0,180,100,0.07));
+  border-color: rgba(0,255,136,0.3);
+  opacity: 0.6;
+}
+
+/* DIFFICULT */
+.section-card.difficult {
+  background: linear-gradient(135deg, rgba(221,136,255,0.2) 0%, rgba(150,50,255,0.15) 100%);
+  border-color: rgba(221,136,255,0.65);
+  cursor: pointer;
+  animation: bossPulse 1.6s ease-in-out infinite;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+}
+@keyframes bossPulse {
+  0%,100% { box-shadow: 0 4px 24px rgba(0,0,0,0.3), 0 0 14px rgba(221,136,255,0.3); }
+  50% { box-shadow: 0 4px 28px rgba(0,0,0,0.3), 0 0 32px rgba(221,136,255,0.65); }
+}
+.section-card.difficult:hover {
+  transform: translateX(8px) scale(1.01);
+  border-color: var(--purple);
+  box-shadow: 0 6px 32px rgba(0,0,0,0.4), 0 0 44px rgba(221,136,255,0.75) !important;
+  animation: none;
+}
+
+.section-card.difficult-done {
+  background: linear-gradient(135deg, rgba(0,255,136,0.1), rgba(0,180,100,0.07));
+  border-color: rgba(0,255,136,0.3);
+  opacity: 0.6;
+}
+
+/* CARD CONTENT */
+.sc-icon {
+  font-family: 'Orbitron', monospace;
+  font-weight: 900;
+  font-size: 22px;
+  min-width: 46px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.section-card.locked .sc-icon { color: rgba(255,255,255,0.25); }
+.section-card.unlocked .sc-icon { color: var(--cyan); text-shadow: 0 0 14px var(--cyan-glow); }
+.section-card.completed .sc-icon { color: var(--green); text-shadow: 0 0 10px var(--green-glow); }
+.section-card.revision .sc-icon { color: var(--gold); text-shadow: 0 0 16px var(--gold-glow); }
+.section-card.revision-done .sc-icon { color: var(--green); }
+.section-card.difficult .sc-icon { color: var(--purple); text-shadow: 0 0 18px var(--purple-glow); font-size: 24px; }
+.section-card.difficult-done .sc-icon { color: var(--green); }
+
+.sc-body { flex: 1; min-width: 0; }
+
+.sc-title {
+  font-family: 'Orbitron', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.section-card.locked .sc-title { color: rgba(255,255,255,0.3); }
+.section-card.unlocked .sc-title { color: #ffffff; }
+.section-card.completed .sc-title { color: var(--green); }
+.section-card.revision .sc-title { color: var(--gold); }
+.section-card.revision-done .sc-title { color: var(--green); }
+.section-card.difficult .sc-title { color: var(--purple); }
+.section-card.difficult-done .sc-title { color: var(--green); }
+
+.sc-desc { font-size: 13px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.sc-badge {
+  font-family: 'Orbitron', monospace;
+  font-size: 8px;
+  letter-spacing: 1px;
+  padding: 5px 11px;
+  border-radius: 4px;
+  white-space: nowrap;
+  border: 1px solid;
+  flex-shrink: 0;
+  font-weight: 700;
+}
+.badge-locked { border-color: rgba(255,255,255,0.15); color: rgba(255,255,255,0.25); }
+.badge-todo { border-color: var(--cyan); color: var(--cyan); background: var(--cyan-dim); }
+.badge-done { border-color: var(--green); color: var(--green); background: var(--green-dim); }
+.badge-required { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
+.badge-required-purple { border-color: var(--purple); color: var(--purple); background: var(--purple-dim); }
+
+/* SCREEN HEADER */
+.screen-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.15);
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.screen-title {
+  font-family: 'Orbitron', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--cyan);
+  text-shadow: 0 0 12px var(--cyan-glow);
+}
+
+.btn-back {
+  font-family: 'Orbitron', monospace;
+  font-size: 9px;
+  letter-spacing: 1px;
+  padding: 7px 14px;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.08);
+  color: var(--text-dim);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-back:hover { border-color: var(--cyan); color: var(--cyan); background: var(--cyan-dim); }
+
+/* STUDY TABLE */
+.study-table-wrap {
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 20px;
+  backdrop-filter: blur(10px);
+}
+
+.study-table { width: 100%; border-collapse: collapse; }
+.study-table thead th {
+  background: rgba(255,255,255,0.12);
+  padding: 12px 14px;
+  text-align: left;
+  font-family: 'Orbitron', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--text-muted);
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+}
+.study-table tbody tr { border-bottom: 1px solid rgba(255,255,255,0.08); transition: background 0.15s; background: rgba(255,255,255,0.04); }
+.study-table tbody tr:nth-child(even) { background: rgba(255,255,255,0.07); }
+.study-table tbody tr:last-child { border-bottom: none; }
+.study-table tbody tr:hover { background: rgba(0,240,255,0.1); }
+.study-table td { padding: 11px 14px; }
+.td-it { color: var(--text-dim); font-size: 14px; }
+.td-base { font-weight: 700; color: #ffffff; letter-spacing: 0.5px; }
+.td-forms { font-size: 14px; color: var(--text-dim); }
+.td-errors { font-family: 'Orbitron', monospace; font-size: 11px; color: var(--red); text-align: center; }
+
+/* PRACTICE HUD */
+.practice-hud {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  flex-wrap: wrap;
+  backdrop-filter: blur(10px);
+}
+
+.hud-track { flex: 1; min-width: 120px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.12); border-radius: 3px; height: 10px; overflow: hidden; }
+.hud-fill { height: 100%; background: linear-gradient(90deg, var(--cyan), var(--purple)); border-radius: 3px; transition: width 0.4s ease; box-shadow: 0 0 8px var(--cyan-glow); }
+.hud-text { font-family: 'Orbitron', monospace; font-size: 11px; color: #ffffff; font-weight: 700; white-space: nowrap; }
+.hud-ok { font-family: 'Orbitron', monospace; font-size: 11px; color: var(--green); font-weight: 700; }
+.hud-bad { font-family: 'Orbitron', monospace; font-size: 11px; color: var(--red); font-weight: 700; }
+
+/* VERB CARD */
+.verb-card {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-bottom: 14px;
+  position: relative;
+  overflow: hidden;
+  animation: cardIn 0.3s cubic-bezier(0.4,0,0.2,1);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+
+.verb-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--cyan), var(--purple), transparent);
+}
+
+.verb-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 50%;
+  background: linear-gradient(180deg, rgba(255,255,255,0.06) 0%, transparent 100%);
+  pointer-events: none;
+}
+
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.vc-it {
+  font-family: 'Orbitron', monospace;
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: #ffffff;
+  margin-bottom: 5px;
+  text-shadow: 0 2px 12px rgba(255,255,255,0.3);
+}
+
+.vc-hint { font-size: 12px; color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 22px; }
+
+.inputs-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+@media (max-width: 560px) { .inputs-row { grid-template-columns: 1fr; } }
+
+.input-group label { display: block; font-family: 'Orbitron', monospace; font-size: 8px; letter-spacing: 2px; color: var(--text-muted); margin-bottom: 5px; }
+
+.verb-input {
+  width: 100%;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: var(--radius-sm);
+  padding: 10px 13px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+  outline: none;
+  transition: all 0.2s;
+  letter-spacing: 1px;
+}
+.verb-input::placeholder { color: rgba(255,255,255,0.2); }
+.verb-input:focus { border-color: var(--cyan); box-shadow: 0 0 0 2px rgba(0,240,255,0.2), 0 0 14px rgba(0,240,255,0.25); background: rgba(0,240,255,0.06); }
+.verb-input.correct { border-color: var(--green); background: rgba(0,255,136,0.12); color: var(--green); box-shadow: 0 0 0 2px rgba(0,255,136,0.2), 0 0 16px var(--green-glow); }
+.verb-input.wrong { border-color: var(--red); background: rgba(255,77,109,0.12); color: var(--red); box-shadow: 0 0 0 2px rgba(255,77,109,0.2); }
+
+.feedback-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; min-height: 20px; }
+@media (max-width: 560px) { .feedback-row { grid-template-columns: 1fr; } }
+
+.fb-item { font-size: 13px; }
+.fb-item.ok { color: var(--green); }
+.fb-item.err { color: var(--red); }
+.fb-item .ans { font-weight: 700; letter-spacing: 1px; }
+
+.retry-notice {
+  background: rgba(255,140,66,0.15);
+  border: 1px solid rgba(255,140,66,0.4);
+  border-radius: var(--radius-sm);
+  padding: 9px 14px;
+  font-family: 'Orbitron', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--orange);
+  margin-bottom: 12px;
+}
+
+/* BUTTONS */
+.action-bar { display: flex; gap: 10px; flex-wrap: wrap; }
+
+.btn {
+  font-family: 'Orbitron', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  padding: 12px 22px;
+  border-radius: var(--radius-sm);
+  border: 1px solid;
+  cursor: pointer;
+  transition: all 0.2s;
+  backdrop-filter: blur(8px);
+}
+
+.btn-primary { background: rgba(0,240,255,0.15); border-color: var(--cyan); color: var(--cyan); }
+.btn-primary:hover { background: rgba(0,240,255,0.25); box-shadow: 0 0 22px rgba(0,240,255,0.45); transform: translateY(-2px); }
+
+.btn-secondary { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.25); color: var(--text-dim); }
+.btn-secondary:hover { border-color: rgba(255,255,255,0.5); color: #ffffff; }
+
+.btn-green { background: rgba(0,255,136,0.15); border-color: var(--green); color: var(--green); }
+.btn-green:hover { background: rgba(0,255,136,0.25); box-shadow: 0 0 22px rgba(0,255,136,0.45); transform: translateY(-2px); }
+
+/* RESULTS */
+.results-card {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.22);
+  border-radius: var(--radius);
+  padding: 36px;
+  text-align: center;
+  backdrop-filter: blur(14px);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.35);
+  position: relative;
+  overflow: hidden;
+}
+.results-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--cyan), var(--green), var(--purple), transparent); }
+
+.res-pct { font-family: 'Orbitron', monospace; font-weight: 900; font-size: 80px; line-height: 1; margin-bottom: 8px; letter-spacing: -2px; }
+.res-pct.pass { color: var(--green); text-shadow: 0 0 30px var(--green-glow), 0 0 60px rgba(0,255,136,0.3); animation: winGlow 1.5s ease-in-out infinite; }
+@keyframes winGlow { 0%,100% { text-shadow: 0 0 20px var(--green-glow); } 50% { text-shadow: 0 0 50px var(--green-glow), 0 0 80px rgba(0,255,136,0.4); } }
+.res-pct.fail { color: var(--red); text-shadow: 0 0 20px rgba(255,77,109,0.5); }
+
+.res-label { font-family: 'Orbitron', monospace; font-size: 12px; letter-spacing: 4px; margin-bottom: 6px; }
+.res-label.pass { color: var(--green); }
+.res-label.fail { color: var(--red); }
+.res-threshold { font-size: 12px; color: var(--text-muted); letter-spacing: 1px; margin-bottom: 28px; }
+
+.res-breakdown { display: flex; justify-content: center; gap: 40px; margin-bottom: 28px; flex-wrap: wrap; }
+.rb-item { text-align: center; }
+.rb-num { font-family: 'Orbitron', monospace; font-weight: 900; font-size: 38px; }
+.rb-num.g { color: var(--green); text-shadow: 0 0 16px var(--green-glow); }
+.rb-num.r { color: var(--red); }
+.rb-label { font-size: 9px; letter-spacing: 2px; color: var(--text-muted); font-family: 'Orbitron', monospace; margin-top: 2px; }
+
+.wrong-list { text-align: left; border-top: 1px solid rgba(255,255,255,0.12); padding-top: 20px; margin-top: 20px; }
+.wrong-list h3 { font-family: 'Orbitron', monospace; font-size: 9px; letter-spacing: 2px; color: var(--text-muted); margin-bottom: 12px; }
+.wi { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,0.08); font-size: 14px; align-items: center; }
+.wi:last-child { border-bottom: none; }
+.wi-it { color: var(--text-dim); }
+.wi-your { color: var(--red); font-size: 13px; }
+.wi-ok { color: var(--green); font-size: 13px; font-weight: 700; }
+
+/* COMPLETION */
+.completion-banner {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,204,0,0.5);
+  border-radius: var(--radius);
+  padding: 40px;
+  text-align: center;
+  backdrop-filter: blur(14px);
+  box-shadow: 0 8px 40px rgba(255,204,0,0.2);
+  position: relative;
+  overflow: hidden;
+}
+.completion-banner::before { content: ''; position: absolute; top: 0; left: -200%; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--gold), transparent); animation: scanGold 2s linear infinite; }
+@keyframes scanGold { to { left: 200%; } }
+
+.cb-emoji { font-size: 64px; margin-bottom: 14px; display: block; animation: trophy 1s ease-in-out infinite; }
+@keyframes trophy { 0%,100%{transform:translateY(0) scale(1);} 50%{transform:translateY(-8px) scale(1.05);} }
+.cb-title { font-family: 'Orbitron', monospace; font-weight: 900; font-size: 24px; letter-spacing: 5px; color: var(--gold); text-shadow: 0 0 25px var(--gold-glow); margin-bottom: 10px; }
+.cb-text { color: var(--text-muted); font-size: 13px; letter-spacing: 2px; }
+
+/* CARD FLASH */
+.verb-card.flash-correct { animation: fCorrect 0.5s ease forwards !important; }
+.verb-card.flash-wrong { animation: fWrong 0.4s ease forwards !important; }
+@keyframes fCorrect { 0%{border-color:rgba(255,255,255,0.25)} 40%{border-color:var(--green);box-shadow:0 0 40px var(--green-glow),inset 0 0 30px rgba(0,255,136,0.1)} 100%{border-color:rgba(255,255,255,0.25)} }
+@keyframes fWrong { 0%{border-color:rgba(255,255,255,0.25)} 40%{border-color:var(--red);box-shadow:0 0 25px rgba(255,77,109,0.5)} 100%{border-color:rgba(255,255,255,0.25)} }
+
+/* MODAL */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,10,0.8); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px; backdrop-filter: blur(8px); }
+.modal { background: rgba(30,15,80,0.95); border: 1px solid rgba(255,255,255,0.2); border-radius: var(--radius); padding: 32px; max-width: 380px; width: 100%; text-align: center; position: relative; backdrop-filter: blur(16px); box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+.modal::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--red), transparent); }
+.modal h2 { font-family: 'Orbitron', monospace; font-size: 14px; letter-spacing: 2px; color: var(--red); margin-bottom: 12px; }
+.modal p { color: var(--text-dim); font-size: 14px; margin-bottom: 24px; line-height: 1.7; }
+.modal-actions { display: flex; gap: 10px; justify-content: center; }
+</style>
+</head>
+<body>
+
+<canvas id="starCanvas"></canvas>
+<canvas id="particleCanvas"></canvas>
+
+<header>
+  <div>
+    <div class="logo">VERB QUEST</div>
+    <span class="logo-sub">irregular verbs trainer</span>
+  </div>
+  <button class="btn-reset" onclick="confirmReset()">⟳ RESET</button>
+</header>
+
+<div id="screen-map" class="screen active">
+  <div class="map-hero">
+    <h1>VERB QUEST</h1>
+    <p>studia · pratica · diventa master</p>
+  </div>
+  <div class="xp-panel">
+    <div class="xp-label-left">XP</div>
+    <div class="xp-track"><div class="xp-fill" id="overallBar" style="width:0%"></div></div>
+    <div class="xp-num" id="overallText">0/0</div>
+  </div>
+  <div class="sections-list" id="sectionsList"></div>
+</div>
+
+<div id="screen-study" class="screen">
+  <div class="screen-header">
+    <div class="screen-title" id="studyTitle"></div>
+    <button class="btn-back" onclick="goMap()">← MAP</button>
+  </div>
+  <div class="study-table-wrap">
+    <table class="study-table">
+      <thead><tr id="studyThead"><th>ITALIANO</th><th>BASE FORM</th><th>PAST SIMPLE</th><th>PAST PARTICIPLE</th></tr></thead>
+      <tbody id="studyTableBody"></tbody>
+    </table>
+  </div>
+  <div class="action-bar">
+    <button class="btn btn-primary" onclick="startPracticeFromStudy()">▶ INIZIA PRATICA</button>
+  </div>
+</div>
+
+<div id="screen-practice" class="screen">
+  <div class="practice-hud">
+    <button class="btn-back" onclick="goMap()">← MAP</button>
+    <div class="hud-track"><div class="hud-fill" id="pbarFill" style="width:0%"></div></div>
+    <div class="hud-text" id="pbarText">0/0</div>
+    <span class="hud-ok" id="scoreOk">✓ 0</span>
+    <span class="hud-bad" id="scoreBad">✗ 0</span>
+  </div>
+  <div id="verbCardWrap"></div>
+  <div class="action-bar">
+    <button class="btn btn-primary" id="checkBtn" onclick="checkAnswer()">▶ CONTROLLA</button>
+    <button class="btn btn-secondary" id="nextBtn" onclick="nextVerb()" style="display:none">AVANTI →</button>
+  </div>
+</div>
+
+<div id="screen-results" class="screen"></div>
+
+<div id="resetModal" class="modal-overlay" style="display:none">
+  <div class="modal">
+    <h2>⚠ RESET</h2>
+    <p>Tutti i progressi e la cronologia errori verranno cancellati.</p>
+    <div class="modal-actions">
+      <button class="btn" style="background:rgba(255,77,109,0.15);border-color:var(--red);color:var(--red)" onclick="doReset()">CONFERMA</button>
+      <button class="btn btn-secondary" onclick="closeModal()">ANNULLA</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── STARS ────────────────────────────────────────────────
+const sc = document.getElementById('starCanvas');
+const sctx = sc.getContext('2d');
+let stars = [];
+
+function resizeSC() {
+  sc.width = window.innerWidth;
+  sc.height = window.innerHeight;
+  stars = [];
+  for (let i = 0; i < 250; i++) {
+    stars.push({
+      x: Math.random() * sc.width,
+      y: Math.random() * sc.height,
+      r: Math.random() * 2 + 0.3,
+      alpha: Math.random() * 0.9 + 0.1,
+      twinkle: Math.random() * Math.PI * 2,
+      ts: Math.random() * 0.02 + 0.005,
+      vy: Math.random() * 0.08 + 0.01,
+      color: ['#ffffff','#ffffff','#ffffff','#aaddff','#ddaaff','#ffddaa'][Math.floor(Math.random()*6)]
+    });
+  }
+}
+
+function animStars() {
+  sctx.clearRect(0, 0, sc.width, sc.height);
+  stars.forEach(s => {
+    s.twinkle += s.ts;
+    const a = s.alpha * (0.4 + 0.6 * Math.sin(s.twinkle));
+    sctx.globalAlpha = a;
+    // draw star shape for bigger stars
+    if (s.r > 1.3) {
+      sctx.save();
+      sctx.translate(s.x, s.y);
+      sctx.fillStyle = s.color;
+      // 4-pointed sparkle
+      sctx.beginPath();
+      const arms = 4, outer = s.r * 1.5, inner = s.r * 0.4;
+      for (let i = 0; i < arms * 2; i++) {
+        const angle = (i * Math.PI) / arms - Math.PI / 2;
+        const r = i % 2 === 0 ? outer : inner;
+        i === 0 ? sctx.moveTo(Math.cos(angle)*r, Math.sin(angle)*r) : sctx.lineTo(Math.cos(angle)*r, Math.sin(angle)*r);
+      }
+      sctx.closePath();
+      sctx.fill();
+      // glow
+      const grd = sctx.createRadialGradient(0,0,0,0,0,s.r*5);
+      grd.addColorStop(0, s.color);
+      grd.addColorStop(1, 'transparent');
+      sctx.globalAlpha = a * 0.25;
+      sctx.beginPath();
+      sctx.arc(0,0,s.r*5,0,Math.PI*2);
+      sctx.fillStyle = grd;
+      sctx.fill();
+      sctx.restore();
+    } else {
+      sctx.beginPath();
+      sctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+      sctx.fillStyle = s.color;
+      sctx.fill();
+    }
+    sctx.globalAlpha = 1;
+    s.y += s.vy;
+    if (s.y > sc.height + 5) { s.y = -5; s.x = Math.random() * sc.width; }
+  });
+  requestAnimationFrame(animStars);
+}
+
+window.addEventListener('resize', resizeSC);
+resizeSC();
+animStars();
+
+// ── PARTICLES ────────────────────────────────────────────
+const pc = document.getElementById('particleCanvas');
+const pctx = pc.getContext('2d');
+let particles = [];
+
+function resizePC() { pc.width = window.innerWidth; pc.height = window.innerHeight; }
+window.addEventListener('resize', resizePC);
+resizePC();
+
+function spawnBurst(x, y, color, count=32) {
+  for (let i = 0; i < count; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const speed = Math.random() * 7 + 2;
+    particles.push({
+      x, y, vx: Math.cos(angle)*speed, vy: Math.sin(angle)*speed - 2.5,
+      r: Math.random() * 4 + 1, alpha: 1, color,
+      gravity: 0.18, decay: Math.random()*0.022+0.014, star: false
+    });
+  }
+  // sparkle stars
+  const sparkColors = ['#ffffff','#ffffaa','#aaffff'];
+  for (let i = 0; i < 15; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const speed = Math.random() * 11 + 5;
+    particles.push({
+      x, y, vx: Math.cos(angle)*speed, vy: Math.sin(angle)*speed - 4,
+      r: Math.random() * 3 + 1.5, alpha: 1,
+      color: sparkColors[Math.floor(Math.random()*sparkColors.length)],
+      gravity: 0.12, decay: Math.random()*0.028+0.018, star: true
+    });
+  }
+}
+
+function drawSparkle(ctx, x, y, r) {
+  ctx.beginPath();
+  const arms = 4;
+  for (let i = 0; i < arms*2; i++) {
+    const angle = (i * Math.PI)/arms - Math.PI/2;
+    const rad = i%2===0 ? r : r*0.35;
+    i===0 ? ctx.moveTo(x+Math.cos(angle)*rad, y+Math.sin(angle)*rad) : ctx.lineTo(x+Math.cos(angle)*rad, y+Math.sin(angle)*rad);
+  }
+  ctx.closePath();
+  ctx.fill();
+}
+
+function animParticles() {
+  pctx.clearRect(0, 0, pc.width, pc.height);
+  particles = particles.filter(p => p.alpha > 0);
+  particles.forEach(p => {
+    p.x += p.vx; p.y += p.vy; p.vy += p.gravity;
+    p.alpha -= p.decay;
+    pctx.globalAlpha = Math.max(0, p.alpha);
+    pctx.fillStyle = p.color;
+    if (p.star) drawSparkle(pctx, p.x, p.y, p.r);
+    else { pctx.beginPath(); pctx.arc(p.x, p.y, p.r, 0, Math.PI*2); pctx.fill(); }
+  });
+  pctx.globalAlpha = 1;
+  requestAnimationFrame(animParticles);
+}
+animParticles();
+
+function burstAt(el, color) {
+  const r = el.getBoundingClientRect();
+  spawnBurst(r.left + r.width/2, r.top + r.height/2, color);
+}
+
+// ── DATA ─────────────────────────────────────────────────
+const ALL_SECTIONS = [
+  { id:1, type:"study", title:"LEVEL 01 — INVARIATI (AAA)", desc:"cut · hit · hurt · let · put · cost · shut · split · spread · read", verbs:[
+    {it:"tagliare",base:"cut",ps:"cut",pp:"cut"},{it:"colpire, picchiare",base:"hit",ps:"hit",pp:"hit"},
+    {it:"fare male, ferire",base:"hurt",ps:"hurt",pp:"hurt"},{it:"lasciare, permettere",base:"let",ps:"let",pp:"let"},
+    {it:"mettere",base:"put",ps:"put",pp:"put"},{it:"costare",base:"cost",ps:"cost",pp:"cost"},
+    {it:"chiudere",base:"shut",ps:"shut",pp:"shut"},{it:"dividere, spaccare",base:"split",ps:"split",pp:"split"},
+    {it:"diffondere, spalmare",base:"spread",ps:"spread",pp:"spread"},{it:"leggere",base:"read",ps:"read",pp:"read"},
+  ]},
+  { id:2, type:"study", title:"LEVEL 02 — ABB COMUNI", desc:"have · make · buy · bring · find · say · tell · keep · leave · think", verbs:[
+    {it:"avere",base:"have",ps:"had",pp:"had"},{it:"fare, fabbricare",base:"make",ps:"made",pp:"made"},
+    {it:"comprare",base:"buy",ps:"bought",pp:"bought"},{it:"portare",base:"bring",ps:"brought",pp:"brought"},
+    {it:"trovare",base:"find",ps:"found",pp:"found"},{it:"dire",base:"say",ps:"said",pp:"said"},
+    {it:"dire, raccontare",base:"tell",ps:"told",pp:"told"},{it:"tenere, mantenere",base:"keep",ps:"kept",pp:"kept"},
+    {it:"lasciare, partire",base:"leave",ps:"left",pp:"left"},{it:"pensare",base:"think",ps:"thought",pp:"thought"},
+  ]},
+  { id:"r12", type:"revision", title:"⟳ RIPASSO — LIVELLI 1+2", desc:"ripasso obbligatorio · 20 verbi", revises:[1,2] },
+  { id:"d12", type:"difficult", title:"★ BOSS FIGHT — DIFFICILI 1-2", desc:"verbi sbagliati ≥2 volte · eliminali!", after:"r12", revises:[1,2] },
+  { id:3, type:"study", title:"LEVEL 03 — ABB CORPO E SENSI", desc:"feel · hear · meet · feed · hold · sit · sleep · spend · stand · teach", verbs:[
+    {it:"sentire, provare",base:"feel",ps:"felt",pp:"felt"},{it:"sentire, udire",base:"hear",ps:"heard",pp:"heard"},
+    {it:"incontrare",base:"meet",ps:"met",pp:"met"},{it:"nutrire, dare da mangiare",base:"feed",ps:"fed",pp:"fed"},
+    {it:"tenere, contenere",base:"hold",ps:"held",pp:"held"},{it:"sedersi",base:"sit",ps:"sat",pp:"sat"},
+    {it:"dormire",base:"sleep",ps:"slept",pp:"slept"},{it:"spendere, trascorrere",base:"spend",ps:"spent",pp:"spent"},
+    {it:"stare in piedi",base:"stand",ps:"stood",pp:"stood"},{it:"insegnare",base:"teach",ps:"taught",pp:"taught"},
+  ]},
+  { id:4, type:"study", title:"LEVEL 04 — ABB ALTRI", desc:"build · catch · fight · lead · lend · lose · mean · pay · sell · send", verbs:[
+    {it:"costruire",base:"build",ps:"built",pp:"built"},{it:"prendere, acchiappare",base:"catch",ps:"caught",pp:"caught"},
+    {it:"combattere, litigare",base:"fight",ps:"fought",pp:"fought"},{it:"guidare, condurre",base:"lead",ps:"led",pp:"led"},
+    {it:"prestare",base:"lend",ps:"lent",pp:"lent"},{it:"perdere",base:"lose",ps:"lost",pp:"lost"},
+    {it:"significare, voler dire",base:"mean",ps:"meant",pp:"meant"},{it:"pagare",base:"pay",ps:"paid",pp:"paid"},
+    {it:"vendere",base:"sell",ps:"sold",pp:"sold"},{it:"mandare, inviare",base:"send",ps:"sent",pp:"sent"},
+  ]},
+  { id:"r34", type:"revision", title:"⟳ RIPASSO — LIVELLI 3+4", desc:"ripasso obbligatorio · 20 verbi", revises:[3,4] },
+  { id:"d34", type:"difficult", title:"★ BOSS FIGHT — DIFFICILI 3-4", desc:"verbi sbagliati ≥2 volte · eliminali!", after:"r34", revises:[3,4] },
+  { id:5, type:"study", title:"LEVEL 05 — ABC FACILI", desc:"come · become · begin · eat · fall · get · give · go · grow · know", verbs:[
+    {it:"venire",base:"come",ps:"came",pp:"come"},{it:"diventare",base:"become",ps:"became",pp:"become"},
+    {it:"iniziare, cominciare",base:"begin",ps:"began",pp:"begun"},{it:"mangiare",base:"eat",ps:"ate",pp:"eaten"},
+    {it:"cadere",base:"fall",ps:"fell",pp:"fallen"},{it:"ottenere, prendere",base:"get",ps:"got",pp:"got"},
+    {it:"dare",base:"give",ps:"gave",pp:"given"},{it:"andare",base:"go",ps:"went",pp:"gone/been"},
+    {it:"crescere, coltivare",base:"grow",ps:"grew",pp:"grown"},{it:"sapere, conoscere",base:"know",ps:"knew",pp:"known"},
+  ]},
+  { id:6, type:"study", title:"LEVEL 06 — ABC MOVIMENTO", desc:"drive · fly · ride · run · swim · take · wear · wake · write · speak", verbs:[
+    {it:"guidare",base:"drive",ps:"drove",pp:"driven"},{it:"volare",base:"fly",ps:"flew",pp:"flown"},
+    {it:"cavalcare, andare in bici",base:"ride",ps:"rode",pp:"ridden"},{it:"correre",base:"run",ps:"ran",pp:"run"},
+    {it:"nuotare",base:"swim",ps:"swam",pp:"swum"},{it:"prendere, portare",base:"take",ps:"took",pp:"taken"},
+    {it:"indossare, portare",base:"wear",ps:"wore",pp:"worn"},{it:"svegliarsi",base:"wake",ps:"woke",pp:"woken"},
+    {it:"scrivere",base:"write",ps:"wrote",pp:"written"},{it:"parlare",base:"speak",ps:"spoke",pp:"spoken"},
+  ]},
+  { id:"r56", type:"revision", title:"⟳ RIPASSO — LIVELLI 5+6", desc:"ripasso obbligatorio · 20 verbi", revises:[5,6] },
+  { id:"d56", type:"difficult", title:"★ BOSS FIGHT — DIFFICILI 5-6", desc:"verbi sbagliati ≥2 volte · eliminali!", after:"r56", revises:[5,6] },
+  { id:7, type:"study", title:"LEVEL 07 — ABC ALTRI", desc:"bite · blow · break · choose · draw · drink · forget · freeze · hide · throw", verbs:[
+    {it:"mordere",base:"bite",ps:"bit",pp:"bitten"},{it:"soffiare",base:"blow",ps:"blew",pp:"blown"},
+    {it:"rompere",base:"break",ps:"broke",pp:"broken"},{it:"scegliere",base:"choose",ps:"chose",pp:"chosen"},
+    {it:"disegnare, tirare",base:"draw",ps:"drew",pp:"drawn"},{it:"bere",base:"drink",ps:"drank",pp:"drunk"},
+    {it:"dimenticare",base:"forget",ps:"forgot",pp:"forgotten"},{it:"congelare, gelare",base:"freeze",ps:"froze",pp:"frozen"},
+    {it:"nascondere",base:"hide",ps:"hid",pp:"hidden"},{it:"lanciare, gettare",base:"throw",ps:"threw",pp:"thrown"},
+  ]},
+  { id:8, type:"study", title:"LEVEL 08 — ABC DIFFICILI", desc:"rise · ring · shake · shine · shoot · show · sing · sink · steal · tear", verbs:[
+    {it:"alzarsi, sorgere",base:"rise",ps:"rose",pp:"risen"},{it:"suonare, telefonare",base:"ring",ps:"rang",pp:"rung"},
+    {it:"scuotere, agitare",base:"shake",ps:"shook",pp:"shaken"},{it:"brillare, risplendere",base:"shine",ps:"shone",pp:"shone"},
+    {it:"sparare",base:"shoot",ps:"shot",pp:"shot"},{it:"mostrare",base:"show",ps:"showed",pp:"shown/showed"},
+    {it:"cantare",base:"sing",ps:"sang",pp:"sung"},{it:"affondare",base:"sink",ps:"sank",pp:"sunk"},
+    {it:"rubare",base:"steal",ps:"stole",pp:"stolen"},{it:"strappare",base:"tear",ps:"tore",pp:"torn"},
+  ]},
+  { id:"r78", type:"revision", title:"⟳ RIPASSO — LIVELLI 7+8", desc:"ripasso obbligatorio · 20 verbi", revises:[7,8] },
+  { id:"d78", type:"difficult", title:"★ BOSS FIGHT — DIFFICILI 7-8", desc:"verbi sbagliati ≥2 volte · eliminali!", after:"r78", revises:[7,8] },
+  { id:9, type:"study", title:"LEVEL 09 — DOPPIA FORMA", desc:"burn · dream · learn · smell · spell · bend · light · understand · win · forgive", verbs:[
+    {it:"bruciare",base:"burn",ps:"burnt/burned",pp:"burnt/burned"},{it:"sognare",base:"dream",ps:"dreamt/dreamed",pp:"dreamt/dreamed"},
+    {it:"imparare",base:"learn",ps:"learnt/learned",pp:"learnt/learned"},{it:"annusare, odorare",base:"smell",ps:"smelt/smelled",pp:"smelt/smelled"},
+    {it:"compitare, sillabare",base:"spell",ps:"spelt/spelled",pp:"spelt/spelled"},{it:"piegare",base:"bend",ps:"bent",pp:"bent"},
+    {it:"accendere",base:"light",ps:"lit",pp:"lit"},{it:"capire, comprendere",base:"understand",ps:"understood",pp:"understood"},
+    {it:"vincere",base:"win",ps:"won",pp:"won"},{it:"perdonare",base:"forgive",ps:"forgave",pp:"forgiven"},
+  ]},
+  { id:10, type:"study", title:"LEVEL 10 — SPECIALI", desc:"be · hang · lie · can · must · see · beat · sweep · lay · hide", verbs:[
+    {it:"essere",base:"be",ps:"was/were",pp:"been"},{it:"appendere",base:"hang",ps:"hung",pp:"hung"},
+    {it:"sdraiarsi",base:"lie",ps:"lay",pp:"lain"},{it:"potere (capacità)",base:"can",ps:"could",pp:"been able to"},
+    {it:"dovere (obbligo)",base:"must",ps:"had to",pp:"—"},{it:"vedere",base:"see",ps:"saw",pp:"seen"},
+    {it:"battere, picchiare",base:"beat",ps:"beat",pp:"beaten"},{it:"spazzare",base:"sweep",ps:"swept",pp:"swept"},
+    {it:"posare, deporre",base:"lay",ps:"laid",pp:"laid"},{it:"nascondere",base:"hide",ps:"hid",pp:"hidden"},
+  ]},
+  { id:"r910", type:"revision", title:"⟳ RIPASSO — LIVELLI 9+10", desc:"ripasso obbligatorio · 20 verbi", revises:[9,10] },
+  { id:"d910", type:"difficult", title:"★ BOSS FIGHT — DIFFICILI 9-10", desc:"verbi sbagliati ≥2 volte · eliminali!", after:"r910", revises:[9,10] },
+  { id:"rfinal", type:"revision", title:"⟳ FINAL BOSS — TUTTI I VERBI", desc:"boss finale · tutti i verbi · diventa MASTER!", revises:[1,2,3,4,5,6,7,8,9,10] },
+];
+
+const SK='vq_s_v2', EK='vq_e_v2';
+let state={}, errorMap={};
+
+function loadState(){
+  try{state=JSON.parse(localStorage.getItem(SK))||{};}catch(e){state={};}
+  try{errorMap=JSON.parse(localStorage.getItem(EK))||{};}catch(e){errorMap={};}
+  ALL_SECTIONS.forEach(s=>{if(state[s.id]===undefined)state[s.id]='locked';});
+  if(state[ALL_SECTIONS[0].id]==='locked')state[ALL_SECTIONS[0].id]='unlocked';
+  saveState();
+}
+function saveState(){
+  try{localStorage.setItem(SK,JSON.stringify(state));}catch(e){}
+  try{localStorage.setItem(EK,JSON.stringify(errorMap));}catch(e){}
+}
+function recordErrors(bases){bases.forEach(b=>{errorMap[b]=(errorMap[b]||0)+1;});saveState();}
+function getDiff(ids){
+  let v=[];ids.forEach(id=>{const s=ALL_SECTIONS.find(x=>x.id===id);if(s&&s.verbs)v=v.concat(s.verbs);});
+  return v.filter(x=>(errorMap[x.base]||0)>=2);
+}
+function unlockNext(cid){
+  const idx=ALL_SECTIONS.findIndex(s=>s.id===cid);if(idx<0)return;
+  if(idx+1<ALL_SECTIONS.length){const n=ALL_SECTIONS[idx+1];if(state[n.id]==='locked')state[n.id]='unlocked';}
+  autoComplete();saveState();
+}
+function autoComplete(){
+  let changed=true;
+  while(changed){changed=false;ALL_SECTIONS.forEach((s,i)=>{
+    if(s.type==='difficult'&&state[s.id]==='unlocked'&&getDiff(s.revises).length===0){
+      state[s.id]='completed';
+      if(i+1<ALL_SECTIONS.length&&state[ALL_SECTIONS[i+1].id]==='locked'){state[ALL_SECTIONS[i+1].id]='unlocked';changed=true;}
+    }
+  });}
+}
+
+function renderMap(){
+  const list=document.getElementById('sectionsList');list.innerHTML='';
+  const total=ALL_SECTIONS.length,done=ALL_SECTIONS.filter(s=>state[s.id]==='completed').length;
+  document.getElementById('overallBar').style.width=`${(done/total)*100}%`;
+  document.getElementById('overallText').textContent=`${done} / ${total}`;
+  if(done===total){
+    const b=document.createElement('div');b.className='completion-banner';
+    b.innerHTML=`<span class="cb-emoji">🏆</span><div class="cb-title">VERB MASTER!</div><div class="cb-text">missione compiuta · tutti i livelli completati</div>`;
+    list.appendChild(b);
+    setTimeout(()=>{
+      for(let i=0;i<8;i++) setTimeout(()=>spawnBurst(Math.random()*window.innerWidth,Math.random()*window.innerHeight*0.6,['#00f0ff','#00ff88','#ffcc00','#dd88ff'][i%4],20),i*250);
+    },100);
+    return;
+  }
+  ALL_SECTIONS.forEach(s=>{
+    const st=state[s.id];
+    const card=document.createElement('div');
+    let cls='section-card ',badge='',icon='';
+    if(typeof s.id==='number')icon=String(s.id).padStart(2,'0');
+    else if(s.type==='revision')icon='↺';
+    else icon='★';
+    if(st==='completed'){
+      cls+=s.type==='difficult'?'difficult-done':s.type==='revision'?'revision-done':'completed';
+      badge=`<span class="sc-badge badge-done">✓ DONE</span>`;
+    } else if(st==='unlocked'){
+      if(s.type==='revision'){cls+='revision';badge=`<span class="sc-badge badge-required">⚠ OBB.</span>`;}
+      else if(s.type==='difficult'){cls+='difficult';badge=`<span class="sc-badge badge-required-purple">★ ${getDiff(s.revises).length}</span>`;}
+      else{cls+='unlocked';badge=`<span class="sc-badge badge-todo">▶ PLAY</span>`;}
+    } else{cls+='locked';badge=`<span class="sc-badge badge-locked">🔒</span>`;}
+    card.className=cls;
+    card.innerHTML=`<div class="sc-icon">${icon}</div><div class="sc-body"><div class="sc-title">${s.title}</div><div class="sc-desc">${s.desc}</div></div>${badge}`;
+    if(st==='unlocked')card.onclick=()=>openSection(s);
+    list.appendChild(card);
+  });
+}
+
+let currentSection=null;
+
+function openSection(s){
+  currentSection=s;
+  if(s.type==='study')showStudy(s);
+  else if(s.type==='revision'){let v=[];s.revises.forEach(id=>{const sec=ALL_SECTIONS.find(x=>x.id===id);if(sec&&sec.verbs)v=v.concat(sec.verbs);});initPractice(v,s);}
+  else if(s.type==='difficult'){const d=getDiff(s.revises);if(!d.length){state[s.id]='completed';unlockNext(s.id);saveState();goMap();return;}initPractice(d,s);}
+}
+
+function showStudy(s){
+  document.getElementById('studyTitle').textContent=s.title;
+  const hasE=s.verbs.some(v=>(errorMap[v.base]||0)>0);
+  document.getElementById('studyThead').innerHTML=hasE
+    ?'<th>ITALIANO</th><th>BASE FORM</th><th>PAST SIMPLE</th><th>PAST PARTICIPLE</th><th>ERR</th>'
+    :'<th>ITALIANO</th><th>BASE FORM</th><th>PAST SIMPLE</th><th>PAST PARTICIPLE</th>';
+  document.getElementById('studyTableBody').innerHTML=s.verbs.map(v=>{
+    const e=errorMap[v.base]||0;
+    return `<tr><td class="td-it">${v.it}</td><td class="td-base">${v.base}</td><td class="td-forms">${v.ps}</td><td class="td-forms">${v.pp}</td>${hasE?`<td class="td-errors">${e>0?'✗'+e:''}</td>`:''}</tr>`;
+  }).join('');
+  showScreen('study');
+}
+
+function startPracticeFromStudy(){initPractice(currentSection.verbs,currentSection);}
+
+let pQ=[],rQ=[],idx=0,ok=0,bad=0,wList=[],checked=false,isRetry=false;
+
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+
+function initPractice(verbs,sec){
+  currentSection=sec;pQ=shuffle(verbs);rQ=[];idx=0;ok=0;bad=0;wList=[];checked=false;isRetry=false;
+  showScreen('practice');showVerb();
+}
+
+function showVerb(){
+  checked=false;
+  const v=pQ[idx];
+  const pct=pQ.length>0?(idx/pQ.length)*100:0;
+  document.getElementById('pbarFill').style.width=`${pct}%`;
+  document.getElementById('pbarText').textContent=`${idx+1}/${pQ.length}`;
+  document.getElementById('scoreOk').textContent=`✓ ${ok}`;
+  document.getElementById('scoreBad').textContent=`✗ ${bad}`;
+  document.getElementById('checkBtn').style.display='inline-block';
+  document.getElementById('nextBtn').style.display='none';
+  document.getElementById('verbCardWrap').innerHTML=`
+    ${isRetry?`<div class="retry-notice">⚠ ROUND DI RECUPERO — ${pQ.length} verbi</div>`:''}
+    <div class="verb-card" id="vcard">
+      <div class="vc-it">${v.it}</div>
+      <div class="vc-hint">// inserisci le tre forme</div>
+      <div class="inputs-row">
+        <div class="input-group"><label>BASE FORM</label><input class="verb-input" id="i0" autocomplete="off" spellcheck="false" onkeydown="hk(event)"></div>
+        <div class="input-group"><label>PAST SIMPLE</label><input class="verb-input" id="i1" autocomplete="off" spellcheck="false" onkeydown="hk(event)"></div>
+        <div class="input-group"><label>PAST PARTICIPLE</label><input class="verb-input" id="i2" autocomplete="off" spellcheck="false" onkeydown="hk(event)"></div>
+      </div>
+      <div class="feedback-row"><div class="fb-item" id="f0"></div><div class="fb-item" id="f1"></div><div class="fb-item" id="f2"></div></div>
+    </div>`;
+  document.getElementById('i0').focus();
+}
+
+function hk(e){if(e.key==='Enter'){if(!checked)checkAnswer();else nextVerb();}}
+function norm(s){return s.trim().toLowerCase();}
+function acc(inp,cor){return cor.split('/').map(x=>norm(x.trim())).some(v=>v===norm(inp));}
+
+function checkAnswer(){
+  if(checked)return;checked=true;
+  const v=pQ[idx];
+  const b=document.getElementById('i0').value,p=document.getElementById('i1').value,pp=document.getElementById('i2').value;
+  const ob=acc(b,v.base),op=acc(p,v.ps),opp=acc(pp,v.pp),allOk=ob&&op&&opp;
+  setF('i0','f0',ob,b,v.base);setF('i1','f1',op,p,v.ps);setF('i2','f2',opp,pp,v.pp);
+  const card=document.getElementById('vcard');
+  if(allOk){
+    ok++;
+    if(card){card.classList.add('flash-correct');setTimeout(()=>card.classList.remove('flash-correct'),500);}
+    burstAt(card,'#00ff88');
+  } else {
+    bad++;wList.push({v,b,p,pp});rQ.push(v);if(!isRetry)recordErrors([v.base]);
+    if(card){card.classList.add('flash-wrong');setTimeout(()=>card.classList.remove('flash-wrong'),400);}
+  }
+  document.getElementById('scoreOk').textContent=`✓ ${ok}`;
+  document.getElementById('scoreBad').textContent=`✗ ${bad}`;
+  document.getElementById('checkBtn').style.display='none';
+  document.getElementById('nextBtn').style.display='inline-block';
+}
+
+function setF(ii,fi,isOk,uv,cv){
+  const inp=document.getElementById(ii),fb=document.getElementById(fi);
+  if(isOk){inp.classList.add('correct');fb.className='fb-item ok';fb.innerHTML='✓';}
+  else{inp.classList.add('wrong');fb.className='fb-item err';fb.innerHTML=uv.trim()?`✗ → <span class="ans">${cv}</span>`:`→ <span class="ans">${cv}</span>`;}
+}
+
+function nextVerb(){
+  idx++;
+  if(idx>=pQ.length){
+    if(rQ.length>0){pQ=shuffle(rQ);rQ=[];idx=0;ok=0;bad=0;wList=[];checked=false;isRetry=true;showVerb();}
+    else showResults();
+  } else showVerb();
+}
+
+function showResults(){
+  const total=pQ.length,pct=Math.round((ok/total)*100),passed=pct>=80;
+  if(passed){state[currentSection.id]='completed';unlockNext(currentSection.id);saveState();
+    setTimeout(()=>{for(let i=0;i<6;i++)setTimeout(()=>spawnBurst(Math.random()*window.innerWidth,Math.random()*window.innerHeight*0.5,['#00f0ff','#00ff88','#ffcc00','#dd88ff'][i%4],22),i*200);},100);}
+  let wHtml='';
+  if(wList.length>0){wHtml=`<div class="wrong-list"><h3>// DA RIPASSARE (${wList.length})</h3>${wList.map(w=>`<div class="wi"><div class="wi-it">${w.v.it}</div><div class="wi-your">${w.b||'?'} · ${w.p||'?'} · ${w.pp||'?'}</div><div class="wi-ok">${w.v.base} · ${w.v.ps} · ${w.v.pp}</div></div>`).join('')}</div>`;}
+  const btnHtml=passed?`<button class="btn btn-green" onclick="goMap()">← MAPPA</button>`:`<button class="btn btn-primary" onclick="retryAll()">↺ RIPROVA</button><button class="btn btn-secondary" onclick="goMap()">← MAPPA</button>`;
+  document.getElementById('screen-results').innerHTML=`
+    <div class="results-card">
+      <div class="res-pct ${passed?'pass':'fail'}">${pct}%</div>
+      <div class="res-label ${passed?'pass':'fail'}">${passed?'✓ LEVEL COMPLETED!':'✗ TRY AGAIN'}</div>
+      <div class="res-threshold">soglia: 80% · ${ok}/${total} corretti</div>
+      <div class="res-breakdown"><div class="rb-item"><div class="rb-num g">${ok}</div><div class="rb-label">CORRETTI</div></div><div class="rb-item"><div class="rb-num r">${bad}</div><div class="rb-label">ERRORI</div></div></div>
+      ${wHtml}
+      <div class="action-bar" style="justify-content:center;margin-top:28px">${btnHtml}</div>
+    </div>`;
+  showScreen('results');
+}
+
+function retryAll(){
+  if(currentSection.type==='revision'){let v=[];currentSection.revises.forEach(id=>{const s=ALL_SECTIONS.find(x=>x.id===id);if(s&&s.verbs)v=v.concat(s.verbs);});initPractice(v,currentSection);}
+  else if(currentSection.type==='difficult')initPractice(getDiff(currentSection.revises),currentSection);
+  else initPractice(currentSection.verbs,currentSection);
+}
+
+function confirmReset(){document.getElementById('resetModal').style.display='flex';}
+function closeModal(){document.getElementById('resetModal').style.display='none';}
+function doReset(){localStorage.removeItem(SK);localStorage.removeItem(EK);state={};errorMap={};closeModal();loadState();goMap();}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(`screen-${id}`).classList.add('active');}
+function goMap(){renderMap();showScreen('map');}
+
+loadState();renderMap();
+</script>
+</body>
+</html>
