@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Irregular Verbs — Percorso</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f5f0e8;
+  --surface: #ffffff;
+  --surface2: #ede8df;
+  --border: #d8d0c4;
+  --text: #1a1614;
+  --text-dim: #6b6259;
+  --text-muted: #a89e93;
+  --accent: #c84b2f;
+  --accent2: #2f6bc8;
+  --accent3: #2a9d6e;
+  --locked: #c0b8ae;
+  --correct: #2a9d6e;
+  --wrong: #c84b2f;
+  --gold: #d4920a;
+  --purple: #7c3aed;
+  --radius: 10px;
+  --radius-sm: 6px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'IBM Plex Sans', sans-serif;
+  min-height: 100vh;
+  font-size: 15px;
+}
+
+header {
+  background: var(--text);
+  color: var(--bg);
+  padding: 16px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 18px; }
+.logo span { color: var(--accent); }
+
+.header-right { display: flex; align-items: center; gap: 12px; }
+
+.btn-reset {
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 12px;
+  padding: 6px 12px;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: transparent;
+  color: rgba(255,255,255,0.5);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-reset:hover { border-color: #f87171; color: #f87171; }
+
+.header-sub { font-size: 12px; color: rgba(255,255,255,0.35); font-family: 'IBM Plex Mono', monospace; }
+
+.screen { display: none; padding: 28px; max-width: 860px; margin: 0 auto; }
+.screen.active { display: block; }
+
+.map-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 26px; margin-bottom: 6px; }
+.map-subtitle { color: var(--text-dim); font-size: 14px; margin-bottom: 24px; }
+
+.progress-overall {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.po-bar-wrap { flex: 1; background: var(--surface2); border-radius: 20px; height: 8px; overflow: hidden; }
+.po-bar-fill { height: 100%; background: var(--accent3); border-radius: 20px; transition: width 0.5s ease; }
+.po-text { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--text-dim); white-space: nowrap; }
+
+.sections-list { display: flex; flex-direction: column; gap: 10px; }
+
+.section-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: all 0.2s;
+}
+
+.section-card.unlocked { cursor: pointer; }
+.section-card.unlocked:hover { border-color: var(--accent); transform: translateX(3px); }
+.section-card.locked { opacity: 0.4; cursor: not-allowed; }
+.section-card.completed { border-color: var(--accent3); background: #f0faf6; }
+.section-card.revision { border-color: var(--gold); background: #fdf8ee; cursor: pointer; }
+.section-card.revision:hover { transform: translateX(3px); }
+.section-card.revision-done { border-color: var(--accent3); background: #f0faf6; opacity: 0.65; }
+.section-card.difficult { border-color: var(--purple); background: #f5f0ff; cursor: pointer; }
+.section-card.difficult:hover { transform: translateX(3px); }
+.section-card.difficult-done { border-color: var(--accent3); background: #f0faf6; opacity: 0.65; }
+
+.sc-num { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 22px; min-width: 36px; color: var(--text-muted); }
+.section-card.unlocked .sc-num { color: var(--text); }
+.section-card.completed .sc-num { color: var(--accent3); }
+.section-card.revision .sc-num { color: var(--gold); }
+.section-card.difficult .sc-num { color: var(--purple); }
+
+.sc-body { flex: 1; }
+.sc-title { font-family: 'Syne', sans-serif; font-weight: 600; font-size: 15px; margin-bottom: 3px; }
+.sc-desc { font-size: 12px; color: var(--text-muted); font-family: 'IBM Plex Mono', monospace; }
+
+.sc-badge { font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; font-family: 'IBM Plex Mono', monospace; white-space: nowrap; }
+.badge-locked { background: var(--surface2); color: var(--text-muted); }
+.badge-todo { background: #fdecea; color: var(--accent); }
+.badge-done { background: #e6f7f0; color: var(--accent3); }
+.badge-required { background: #fff3cd; color: #856404; font-weight: 700; }
+.badge-required-purple { background: #ede9fe; color: var(--purple); font-weight: 700; }
+
+.study-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; gap: 12px; flex-wrap: wrap; }
+.study-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 22px; }
+
+.btn-back {
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 13px;
+  padding: 7px 14px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-dim);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-back:hover { border-color: var(--text); color: var(--text); }
+
+.study-table-wrap { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 24px; }
+.study-table { width: 100%; border-collapse: collapse; }
+.study-table thead th { background: var(--text); color: var(--bg); padding: 11px 16px; text-align: left; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; font-family: 'IBM Plex Mono', monospace; }
+.study-table tbody tr { border-bottom: 1px solid var(--border); }
+.study-table tbody tr:last-child { border-bottom: none; }
+.study-table tbody tr:hover { background: var(--surface2); }
+.study-table td { padding: 11px 16px; }
+.td-it { color: var(--text-dim); font-size: 13px; }
+.td-base { font-weight: 600; }
+.td-forms { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--text-dim); }
+.td-errors { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--wrong); text-align: center; }
+
+.practice-header { display: flex; align-items: center; gap: 14px; margin-bottom: 28px; flex-wrap: wrap; }
+.pbar-wrap { flex: 1; min-width: 160px; background: var(--surface2); border-radius: 20px; height: 6px; overflow: hidden; }
+.pbar-fill { height: 100%; background: var(--accent); border-radius: 20px; transition: width 0.3s; }
+.pbar-text { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--text-muted); white-space: nowrap; }
+.score-info { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--text-dim); }
+
+.verb-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; margin-bottom: 18px; animation: fadeUp 0.25s ease; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+.vc-it { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 30px; margin-bottom: 4px; }
+.vc-hint { font-size: 12px; color: var(--text-muted); font-family: 'IBM Plex Mono', monospace; margin-bottom: 24px; }
+
+.inputs-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+@media (max-width: 560px) { .inputs-row { grid-template-columns: 1fr; } }
+
+.input-group label { display: block; font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 5px; font-family: 'IBM Plex Mono', monospace; }
+
+.verb-input { width: 100%; background: var(--surface2); border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 10px 13px; font-family: 'IBM Plex Mono', monospace; font-size: 15px; color: var(--text); outline: none; transition: all 0.2s; }
+.verb-input:focus { border-color: var(--accent2); background: #fff; }
+.verb-input.correct { border-color: var(--correct); background: #f0faf6; color: var(--correct); }
+.verb-input.wrong { border-color: var(--wrong); background: #fdf0ee; color: var(--wrong); }
+
+.feedback-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; min-height: 18px; margin-bottom: 4px; }
+@media (max-width: 560px) { .feedback-row { grid-template-columns: 1fr; } }
+
+.fb-item { font-size: 12px; font-family: 'IBM Plex Mono', monospace; }
+.fb-item.ok { color: var(--correct); }
+.fb-item.err { color: var(--wrong); }
+.fb-item .ans { font-weight: 600; }
+
+.retry-notice { background: #fdecea; border: 1px solid #f5c6c1; border-radius: var(--radius-sm); padding: 10px 14px; font-size: 13px; color: var(--accent); margin-bottom: 14px; font-family: 'IBM Plex Mono', monospace; }
+
+.action-bar { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+
+.btn { font-family: 'IBM Plex Sans', sans-serif; font-size: 14px; font-weight: 500; padding: 10px 22px; border-radius: var(--radius-sm); border: none; cursor: pointer; transition: all 0.2s; }
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { background: #a83a22; }
+.btn-secondary { background: transparent; border: 1.5px solid var(--border); color: var(--text-dim); }
+.btn-secondary:hover { border-color: var(--text); color: var(--text); }
+.btn-green { background: var(--correct); color: #fff; }
+.btn-green:hover { background: #228a5e; }
+
+.results-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 36px; text-align: center; }
+.res-pct { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 64px; line-height: 1; margin-bottom: 6px; }
+.res-pct.pass { color: var(--correct); }
+.res-pct.fail { color: var(--wrong); }
+.res-label { font-size: 15px; color: var(--text-dim); margin-bottom: 6px; }
+.res-threshold { font-size: 12px; color: var(--text-muted); font-family: 'IBM Plex Mono', monospace; margin-bottom: 28px; }
+
+.res-breakdown { display: flex; justify-content: center; gap: 28px; margin-bottom: 28px; flex-wrap: wrap; }
+.rb-item { text-align: center; }
+.rb-num { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 28px; }
+.rb-num.g { color: var(--correct); }
+.rb-num.r { color: var(--wrong); }
+.rb-label { font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px; font-family: 'IBM Plex Mono', monospace; }
+
+.wrong-list { text-align: left; border-top: 1px solid var(--border); padding-top: 20px; margin-top: 20px; }
+.wrong-list h3 { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; font-family: 'IBM Plex Mono', monospace; }
+
+.wi { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 13px; align-items: center; }
+.wi:last-child { border-bottom: none; }
+.wi-it { color: var(--text-dim); }
+.wi-your { font-family: 'IBM Plex Mono', monospace; color: var(--wrong); font-size: 12px; }
+.wi-ok { font-family: 'IBM Plex Mono', monospace; color: var(--correct); font-size: 12px; font-weight: 600; }
+
+.completion-banner { background: var(--text); color: var(--bg); border-radius: var(--radius); padding: 32px; text-align: center; margin-bottom: 20px; }
+.cb-emoji { font-size: 48px; margin-bottom: 12px; }
+.cb-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 24px; margin-bottom: 8px; }
+.cb-text { color: rgba(255,255,255,0.5); font-size: 14px; }
+
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
+.modal { background: var(--surface); border-radius: var(--radius); padding: 32px; max-width: 380px; width: 100%; text-align: center; }
+.modal h2 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 20px; margin-bottom: 10px; }
+.modal p { color: var(--text-dim); font-size: 14px; margin-bottom: 24px; line-height: 1.6; }
+.modal-actions { display: flex; gap: 10px; justify-content: center; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Irregular <span>Verbs</span></div>
+  <div class="header-right">
+    <div class="header-sub">percorso guidato</div>
+    <button class="btn-reset" onclick="confirmReset()">↺ ricomincia</button>
+  </div>
+</header>
+
+<div id="screen-map" class="screen active">
+  <div class="map-title">Il tuo percorso</div>
+  <div class="map-subtitle">Completa ogni sezione per sbloccare la successiva. I ripassi sono obbligatori.</div>
+  <div class="progress-overall">
+    <div class="po-bar-wrap"><div class="po-bar-fill" id="overallBar" style="width:0%"></div></div>
+    <div class="po-text" id="overallText">0 / 0 sezioni</div>
+  </div>
+  <div class="sections-list" id="sectionsList"></div>
+</div>
+
+<div id="screen-study" class="screen">
+  <div class="study-header">
+    <div class="study-title" id="studyTitle"></div>
+    <button class="btn-back" onclick="goMap()">← Mappa</button>
+  </div>
+  <div class="study-table-wrap">
+    <table class="study-table">
+      <thead><tr id="studyThead"><th>Italiano</th><th>Base form</th><th>Past simple</th><th>Past participle</th></tr></thead>
+      <tbody id="studyTableBody"></tbody>
+    </table>
+  </div>
+  <div class="action-bar">
+    <button class="btn btn-primary" onclick="startPracticeFromStudy()">Inizia pratica →</button>
+  </div>
+</div>
+
+<div id="screen-practice" class="screen">
+  <div class="practice-header">
+    <button class="btn-back" onclick="goMap()">← Mappa</button>
+    <div class="pbar-wrap"><div class="pbar-fill" id="pbarFill" style="width:0%"></div></div>
+    <div class="pbar-text" id="pbarText">0/0</div>
+    <div class="score-info" id="scoreInfo">✓0 ✗0</div>
+  </div>
+  <div id="verbCardWrap"></div>
+  <div class="action-bar">
+    <button class="btn btn-primary" id="checkBtn" onclick="checkAnswer()">Controlla</button>
+    <button class="btn btn-secondary" id="nextBtn" onclick="nextVerb()" style="display:none">Avanti →</button>
+  </div>
+</div>
+
+<div id="screen-results" class="screen"></div>
+
+<div id="resetModal" class="modal-overlay" style="display:none">
+  <div class="modal">
+    <h2>Ricominciare da zero?</h2>
+    <p>Perderai tutti i progressi e la cronologia degli errori. Non si può annullare.</p>
+    <div class="modal-actions">
+      <button class="btn btn-primary" onclick="doReset()">Sì, ricomincia</button>
+      <button class="btn btn-secondary" onclick="closeModal()">Annulla</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const ALL_SECTIONS = [
+  { id:1, type:"study", title:"Sezione 1 — Invariati (AAA)", desc:"cut · hit · hurt · let · put · cost · shut · split · spread · read",
+    verbs:[
+      {it:"tagliare",base:"cut",ps:"cut",pp:"cut"},
+      {it:"colpire, picchiare",base:"hit",ps:"hit",pp:"hit"},
+      {it:"fare male, ferire",base:"hurt",ps:"hurt",pp:"hurt"},
+      {it:"lasciare, permettere",base:"let",ps:"let",pp:"let"},
+      {it:"mettere",base:"put",ps:"put",pp:"put"},
+      {it:"costare",base:"cost",ps:"cost",pp:"cost"},
+      {it:"chiudere",base:"shut",ps:"shut",pp:"shut"},
+      {it:"dividere, spaccare",base:"split",ps:"split",pp:"split"},
+      {it:"diffondere, spalmare",base:"spread",ps:"spread",pp:"spread"},
+      {it:"leggere",base:"read",ps:"read",pp:"read"},
+    ]
+  },
+  { id:2, type:"study", title:"Sezione 2 — ABB comuni", desc:"have · make · buy · bring · find · say · tell · keep · leave · think",
+    verbs:[
+      {it:"avere",base:"have",ps:"had",pp:"had"},
+      {it:"fare, fabbricare",base:"make",ps:"made",pp:"made"},
+      {it:"comprare",base:"buy",ps:"bought",pp:"bought"},
+      {it:"portare",base:"bring",ps:"brought",pp:"brought"},
+      {it:"trovare",base:"find",ps:"found",pp:"found"},
+      {it:"dire",base:"say",ps:"said",pp:"said"},
+      {it:"dire, raccontare",base:"tell",ps:"told",pp:"told"},
+      {it:"tenere, mantenere",base:"keep",ps:"kept",pp:"kept"},
+      {it:"lasciare, partire",base:"leave",ps:"left",pp:"left"},
+      {it:"pensare",base:"think",ps:"thought",pp:"thought"},
+    ]
+  },
+  { id:"r12", type:"revision", title:"Ripasso — Sezioni 1 e 2", desc:"ripasso obbligatorio · 20 verbi", revises:[1,2] },
+  { id:"d12", type:"difficult", title:"★ Verbi Difficili — sez. 1-2", desc:"verbi sbagliati ≥2 volte", after:"r12", revises:[1,2] },
+  { id:3, type:"study", title:"Sezione 3 — ABB corpo e sensi", desc:"feel · hear · meet · feed · hold · sit · sleep · spend · stand · teach",
+    verbs:[
+      {it:"sentire, provare",base:"feel",ps:"felt",pp:"felt"},
+      {it:"sentire, udire",base:"hear",ps:"heard",pp:"heard"},
+      {it:"incontrare",base:"meet",ps:"met",pp:"met"},
+      {it:"nutrire, dare da mangiare",base:"feed",ps:"fed",pp:"fed"},
+      {it:"tenere, contenere",base:"hold",ps:"held",pp:"held"},
+      {it:"sedersi",base:"sit",ps:"sat",pp:"sat"},
+      {it:"dormire",base:"sleep",ps:"slept",pp:"slept"},
+      {it:"spendere, trascorrere",base:"spend",ps:"spent",pp:"spent"},
+      {it:"stare in piedi",base:"stand",ps:"stood",pp:"stood"},
+      {it:"insegnare",base:"teach",ps:"taught",pp:"taught"},
+    ]
+  },
+  { id:4, type:"study", title:"Sezione 4 — ABB altri", desc:"build · catch · fight · lead · lend · lose · mean · pay · sell · send",
+    verbs:[
+      {it:"costruire",base:"build",ps:"built",pp:"built"},
+      {it:"prendere, acchiappare",base:"catch",ps:"caught",pp:"caught"},
+      {it:"combattere, litigare",base:"fight",ps:"fought",pp:"fought"},
+      {it:"guidare, condurre",base:"lead",ps:"led",pp:"led"},
+      {it:"prestare",base:"lend",ps:"lent",pp:"lent"},
+      {it:"perdere",base:"lose",ps:"lost",pp:"lost"},
+      {it:"significare, voler dire",base:"mean",ps:"meant",pp:"meant"},
+      {it:"pagare",base:"pay",ps:"paid",pp:"paid"},
+      {it:"vendere",base:"sell",ps:"sold",pp:"sold"},
+      {it:"mandare, inviare",base:"send",ps:"sent",pp:"sent"},
+    ]
+  },
+  { id:"r34", type:"revision", title:"Ripasso — Sezioni 3 e 4", desc:"ripasso obbligatorio · 20 verbi", revises:[3,4] },
+  { id:"d34", type:"difficult", title:"★ Verbi Difficili — sez. 3-4", desc:"verbi sbagliati ≥2 volte", after:"r34", revises:[3,4] },
+  { id:5, type:"study", title:"Sezione 5 — ABC facili", desc:"come · become · begin · eat · fall · get · give · go · grow · know",
+    verbs:[
+      {it:"venire",base:"come",ps:"came",pp:"come"},
+      {it:"diventare",base:"become",ps:"became",pp:"become"},
+      {it:"iniziare, cominciare",base:"begin",ps:"began",pp:"begun"},
+      {it:"mangiare",base:"eat",ps:"ate",pp:"eaten"},
+      {it:"cadere",base:"fall",ps:"fell",pp:"fallen"},
+      {it:"ottenere, prendere",base:"get",ps:"got",pp:"got"},
+      {it:"dare",base:"give",ps:"gave",pp:"given"},
+      {it:"andare",base:"go",ps:"went",pp:"gone/been"},
+      {it:"crescere, coltivare",base:"grow",ps:"grew",pp:"grown"},
+      {it:"sapere, conoscere",base:"know",ps:"knew",pp:"known"},
+    ]
+  },
+  { id:6, type:"study", title:"Sezione 6 — ABC movimento", desc:"drive · fly · ride · run · swim · take · wear · wake · write · speak",
+    verbs:[
+      {it:"guidare",base:"drive",ps:"drove",pp:"driven"},
+      {it:"volare",base:"fly",ps:"flew",pp:"flown"},
+      {it:"cavalcare, andare in bici",base:"ride",ps:"rode",pp:"ridden"},
+      {it:"correre",base:"run",ps:"ran",pp:"run"},
+      {it:"nuotare",base:"swim",ps:"swam",pp:"swum"},
+      {it:"prendere, portare",base:"take",ps:"took",pp:"taken"},
+      {it:"indossare, portare",base:"wear",ps:"wore",pp:"worn"},
+      {it:"svegliarsi",base:"wake",ps:"woke",pp:"woken"},
+      {it:"scrivere",base:"write",ps:"wrote",pp:"written"},
+      {it:"parlare",base:"speak",ps:"spoke",pp:"spoken"},
+    ]
+  },
+  { id:"r56", type:"revision", title:"Ripasso — Sezioni 5 e 6", desc:"ripasso obbligatorio · 20 verbi", revises:[5,6] },
+  { id:"d56", type:"difficult", title:"★ Verbi Difficili — sez. 5-6", desc:"verbi sbagliati ≥2 volte", after:"r56", revises:[5,6] },
+  { id:7, type:"study", title:"Sezione 7 — ABC altri", desc:"bite · blow · break · choose · draw · drink · forget · freeze · hide · throw",
+    verbs:[
+      {it:"mordere",base:"bite",ps:"bit",pp:"bitten"},
+      {it:"soffiare",base:"blow",ps:"blew",pp:"blown"},
+      {it:"rompere",base:"break",ps:"broke",pp:"broken"},
+      {it:"scegliere",base:"choose",ps:"chose",pp:"chosen"},
+      {it:"disegnare, tirare",base:"draw",ps:"drew",pp:"drawn"},
+      {it:"bere",base:"drink",ps:"drank",pp:"drunk"},
+      {it:"dimenticare",base:"forget",ps:"forgot",pp:"forgotten"},
+      {it:"congelare, gelare",base:"freeze",ps:"froze",pp:"frozen"},
+      {it:"nascondere",base:"hide",ps:"hid",pp:"hidden"},
+      {it:"lanciare, gettare",base:"throw",ps:"threw",pp:"thrown"},
+    ]
+  },
+  { id:8, type:"study", title:"Sezione 8 — ABC difficili", desc:"rise · ring · shake · shine · shoot · show · sing · sink · steal · tear",
+    verbs:[
+      {it:"alzarsi, sorgere",base:"rise",ps:"rose",pp:"risen"},
+      {it:"suonare, telefonare",base:"ring",ps:"rang",pp:"rung"},
+      {it:"scuotere, agitare",base:"shake",ps:"shook",pp:"shaken"},
+      {it:"brillare, risplendere",base:"shine",ps:"shone",pp:"shone"},
+      {it:"sparare",base:"shoot",ps:"shot",pp:"shot"},
+      {it:"mostrare",base:"show",ps:"showed",pp:"shown/showed"},
+      {it:"cantare",base:"sing",ps:"sang",pp:"sung"},
+      {it:"affondare",base:"sink",ps:"sank",pp:"sunk"},
+      {it:"rubare",base:"steal",ps:"stole",pp:"stolen"},
+      {it:"strappare",base:"tear",ps:"tore",pp:"torn"},
+    ]
+  },
+  { id:"r78", type:"revision", title:"Ripasso — Sezioni 7 e 8", desc:"ripasso obbligatorio · 20 verbi", revises:[7,8] },
+  { id:"d78", type:"difficult", title:"★ Verbi Difficili — sez. 7-8", desc:"verbi sbagliati ≥2 volte", after:"r78", revises:[7,8] },
+  { id:9, type:"study", title:"Sezione 9 — Doppia forma + altri ABB", desc:"burn · dream · learn · smell · spell · bend · light · understand · win · forgive",
+    verbs:[
+      {it:"bruciare",base:"burn",ps:"burnt/burned",pp:"burnt/burned"},
+      {it:"sognare",base:"dream",ps:"dreamt/dreamed",pp:"dreamt/dreamed"},
+      {it:"imparare",base:"learn",ps:"learnt/learned",pp:"learnt/learned"},
+      {it:"annusare, odorare",base:"smell",ps:"smelt/smelled",pp:"smelt/smelled"},
+      {it:"compitare, sillabare",base:"spell",ps:"spelt/spelled",pp:"spelt/spelled"},
+      {it:"piegare",base:"bend",ps:"bent",pp:"bent"},
+      {it:"accendere",base:"light",ps:"lit",pp:"lit"},
+      {it:"capire, comprendere",base:"understand",ps:"understood",pp:"understood"},
+      {it:"vincere",base:"win",ps:"won",pp:"won"},
+      {it:"perdonare",base:"forgive",ps:"forgave",pp:"forgiven"},
+    ]
+  },
+  { id:10, type:"study", title:"Sezione 10 — Speciali", desc:"be · hang · lie · can · must · see · beat · sweep · lay · hide",
+    verbs:[
+      {it:"essere",base:"be",ps:"was/were",pp:"been"},
+      {it:"appendere",base:"hang",ps:"hung",pp:"hung"},
+      {it:"sdraiarsi",base:"lie",ps:"lay",pp:"lain"},
+      {it:"potere (capacità)",base:"can",ps:"could",pp:"been able to"},
+      {it:"dovere (obbligo)",base:"must",ps:"had to",pp:"—"},
+      {it:"vedere",base:"see",ps:"saw",pp:"seen"},
+      {it:"battere, picchiare",base:"beat",ps:"beat",pp:"beaten"},
+      {it:"spazzare",base:"sweep",ps:"swept",pp:"swept"},
+      {it:"posare, deporre",base:"lay",ps:"laid",pp:"laid"},
+      {it:"nascondere",base:"hide",ps:"hid",pp:"hidden"},
+    ]
+  },
+  { id:"r910", type:"revision", title:"Ripasso — Sezioni 9 e 10", desc:"ripasso obbligatorio · 20 verbi", revises:[9,10] },
+  { id:"d910", type:"difficult", title:"★ Verbi Difficili — sez. 9-10", desc:"verbi sbagliati ≥2 volte", after:"r910", revises:[9,10] },
+  { id:"rfinal", type:"revision", title:"Ripasso Finale — Tutti i verbi", desc:"ripasso obbligatorio · tutti i verbi", revises:[1,2,3,4,5,6,7,8,9,10] },
+];
+
+// STATE
+const STATE_KEY = 'iv_state_v4';
+const ERRORS_KEY = 'iv_errors_v4';
+let state = {};
+let errorMap = {};
+
+function loadState() {
+  try { state = JSON.parse(localStorage.getItem(STATE_KEY)) || {}; } catch(e) { state = {}; }
+  try { errorMap = JSON.parse(localStorage.getItem(ERRORS_KEY)) || {}; } catch(e) { errorMap = {}; }
+  ALL_SECTIONS.forEach(s => { if (state[s.id] === undefined) state[s.id] = 'locked'; });
+  if (state[ALL_SECTIONS[0].id] === 'locked') state[ALL_SECTIONS[0].id] = 'unlocked';
+  saveState();
+}
+
+function saveState() {
+  try { localStorage.setItem(STATE_KEY, JSON.stringify(state)); } catch(e) {}
+  try { localStorage.setItem(ERRORS_KEY, JSON.stringify(errorMap)); } catch(e) {}
+}
+
+function recordErrors(bases) {
+  bases.forEach(b => { errorMap[b] = (errorMap[b] || 0) + 1; });
+  saveState();
+}
+
+function getDifficultVerbs(sectionIds) {
+  let verbs = [];
+  sectionIds.forEach(id => {
+    const sec = ALL_SECTIONS.find(s => s.id === id);
+    if (sec && sec.verbs) verbs = verbs.concat(sec.verbs);
+  });
+  return verbs.filter(v => (errorMap[v.base] || 0) >= 2);
+}
+
+function unlockNext(completedId) {
+  const idx = ALL_SECTIONS.findIndex(s => s.id === completedId);
+  if (idx < 0) return;
+  if (idx + 1 < ALL_SECTIONS.length) {
+    const next = ALL_SECTIONS[idx + 1];
+    if (state[next.id] === 'locked') state[next.id] = 'unlocked';
+  }
+  autoCompleteDifficult();
+  saveState();
+}
+
+function autoCompleteDifficult() {
+  let changed = true;
+  while (changed) {
+    changed = false;
+    ALL_SECTIONS.forEach((s, idx) => {
+      if (s.type === 'difficult' && state[s.id] === 'unlocked') {
+        const diff = getDifficultVerbs(s.revises);
+        if (diff.length === 0) {
+          state[s.id] = 'completed';
+          if (idx + 1 < ALL_SECTIONS.length) {
+            const next = ALL_SECTIONS[idx + 1];
+            if (state[next.id] === 'locked') { state[next.id] = 'unlocked'; changed = true; }
+          }
+        }
+      }
+    });
+  }
+}
+
+// MAP
+function renderMap() {
+  const list = document.getElementById('sectionsList');
+  list.innerHTML = '';
+  const total = ALL_SECTIONS.length;
+  const completed = ALL_SECTIONS.filter(s => state[s.id] === 'completed').length;
+  document.getElementById('overallBar').style.width = `${(completed/total)*100}%`;
+  document.getElementById('overallText').textContent = `${completed} / ${total} sezioni`;
+
+  if (completed === total) {
+    const b = document.createElement('div');
+    b.className = 'completion-banner';
+    b.innerHTML = `<div class="cb-emoji">🏆</div><div class="cb-title">Percorso completato!</div><div class="cb-text">Hai studiato e ripassato tutti i verbi irregolari.</div>`;
+    list.appendChild(b);
+    return;
+  }
+
+  ALL_SECTIONS.forEach(s => {
+    const st = state[s.id];
+    const card = document.createElement('div');
+    let cls = 'section-card ';
+    let badge = '';
+    let numStr = s.type === 'revision' ? '↺' : s.type === 'difficult' ? '★' : s.id;
+
+    if (st === 'completed') {
+      cls += s.type === 'difficult' ? 'difficult-done' : s.type === 'revision' ? 'revision-done' : 'completed';
+      badge = `<span class="sc-badge badge-done">✓</span>`;
+    } else if (st === 'unlocked') {
+      if (s.type === 'revision') {
+        cls += 'revision';
+        badge = `<span class="sc-badge badge-required">⚠ OBBLIGATORIO</span>`;
+      } else if (s.type === 'difficult') {
+        const count = getDifficultVerbs(s.revises).length;
+        cls += 'difficult';
+        badge = `<span class="sc-badge badge-required-purple">⚠ ${count} verbi</span>`;
+      } else {
+        cls += 'unlocked';
+        badge = `<span class="sc-badge badge-todo">da fare</span>`;
+      }
+    } else {
+      cls += 'locked';
+      badge = `<span class="sc-badge badge-locked">🔒</span>`;
+    }
+
+    card.className = cls;
+    card.innerHTML = `<div class="sc-num">${numStr}</div><div class="sc-body"><div class="sc-title">${s.title}</div><div class="sc-desc">${s.desc}</div></div>${badge}`;
+    if (st === 'unlocked') card.onclick = () => openSection(s);
+    list.appendChild(card);
+  });
+}
+
+// OPEN
+let currentSection = null;
+
+function openSection(s) {
+  currentSection = s;
+  if (s.type === 'study') showStudy(s);
+  else if (s.type === 'revision') { let v=[]; s.revises.forEach(id=>{const sec=ALL_SECTIONS.find(x=>x.id===id);if(sec&&sec.verbs)v=v.concat(sec.verbs);}); initPractice(v,s); }
+  else if (s.type === 'difficult') {
+    const diff = getDifficultVerbs(s.revises);
+    if (diff.length === 0) { state[s.id]='completed'; unlockNext(s.id); saveState(); goMap(); return; }
+    initPractice(diff, s);
+  }
+}
+
+function showStudy(s) {
+  document.getElementById('studyTitle').textContent = s.title;
+  const hasErrors = s.verbs.some(v => (errorMap[v.base]||0) > 0);
+  document.getElementById('studyThead').innerHTML = hasErrors
+    ? '<th>Italiano</th><th>Base form</th><th>Past simple</th><th>Past participle</th><th>Errori</th>'
+    : '<th>Italiano</th><th>Base form</th><th>Past simple</th><th>Past participle</th>';
+  document.getElementById('studyTableBody').innerHTML = s.verbs.map(v => {
+    const e = errorMap[v.base] || 0;
+    return `<tr><td class="td-it">${v.it}</td><td class="td-base">${v.base}</td><td class="td-forms">${v.ps}</td><td class="td-forms">${v.pp}</td>${hasErrors?`<td class="td-errors">${e>0?'✗ '+e:''}</td>`:''}</tr>`;
+  }).join('');
+  showScreen('study');
+}
+
+function startPracticeFromStudy() { initPractice(currentSection.verbs, currentSection); }
+
+// PRACTICE
+let practiceQueue=[], retryQueue=[], currentVerbIdx=0, correctCount=0, wrongCount=0, wrongList=[], checked=false, isRetry=false;
+
+function shuffle(arr) { const a=[...arr]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+
+function initPractice(verbs, section) {
+  currentSection = section;
+  practiceQueue = shuffle(verbs);
+  retryQueue = []; currentVerbIdx = 0; correctCount = 0; wrongCount = 0; wrongList = []; checked = false; isRetry = false;
+  showScreen('practice');
+  showVerb();
+}
+
+function showVerb() {
+  checked = false;
+  const verb = practiceQueue[currentVerbIdx];
+  const pct = practiceQueue.length > 0 ? (currentVerbIdx/practiceQueue.length)*100 : 0;
+  document.getElementById('pbarFill').style.width = `${pct}%`;
+  document.getElementById('pbarText').textContent = `${currentVerbIdx+1}/${practiceQueue.length}`;
+  document.getElementById('scoreInfo').textContent = `✓${correctCount} ✗${wrongCount}`;
+  document.getElementById('checkBtn').style.display = 'inline-block';
+  document.getElementById('nextBtn').style.display = 'none';
+  document.getElementById('verbCardWrap').innerHTML = `
+    ${isRetry?`<div class="retry-notice">Ripasso dei ${practiceQueue.length} verbi sbagliati — riprova!</div>`:''}
+    <div class="verb-card">
+      <div class="vc-it">${verb.it}</div>
+      <div class="vc-hint">inserisci le tre forme</div>
+      <div class="inputs-row">
+        <div class="input-group"><label>Base form</label><input class="verb-input" id="inp-base" autocomplete="off" spellcheck="false" onkeydown="handleKey(event)"></div>
+        <div class="input-group"><label>Past simple</label><input class="verb-input" id="inp-ps" autocomplete="off" spellcheck="false" onkeydown="handleKey(event)"></div>
+        <div class="input-group"><label>Past participle</label><input class="verb-input" id="inp-pp" autocomplete="off" spellcheck="false" onkeydown="handleKey(event)"></div>
+      </div>
+      <div class="feedback-row"><div class="fb-item" id="fb-base"></div><div class="fb-item" id="fb-ps"></div><div class="fb-item" id="fb-pp"></div></div>
+    </div>`;
+  document.getElementById('inp-base').focus();
+}
+
+function handleKey(e) { if(e.key==='Enter'){if(!checked)checkAnswer();else nextVerb();} }
+function norm(s){return s.trim().toLowerCase();}
+function accepted(inp,correct){return correct.split('/').map(x=>norm(x.trim())).some(v=>v===norm(inp));}
+
+function checkAnswer() {
+  if(checked)return; checked=true;
+  const verb=practiceQueue[currentVerbIdx];
+  const b=document.getElementById('inp-base').value;
+  const p=document.getElementById('inp-ps').value;
+  const pp=document.getElementById('inp-pp').value;
+  const okB=accepted(b,verb.base), okP=accepted(p,verb.ps), okPP=accepted(pp,verb.pp);
+  setField('inp-base','fb-base',okB,b,verb.base);
+  setField('inp-ps','fb-ps',okP,p,verb.ps);
+  setField('inp-pp','fb-pp',okPP,pp,verb.pp);
+  if(okB&&okP&&okPP){correctCount++;}
+  else{wrongCount++;wrongList.push({verb,b,p,pp});retryQueue.push(verb);if(!isRetry)recordErrors([verb.base]);}
+  document.getElementById('scoreInfo').textContent=`✓${correctCount} ✗${wrongCount}`;
+  document.getElementById('checkBtn').style.display='none';
+  document.getElementById('nextBtn').style.display='inline-block';
+}
+
+function setField(iid,fid,ok,uv,cv) {
+  const inp=document.getElementById(iid), fb=document.getElementById(fid);
+  if(ok){inp.classList.add('correct');fb.className='fb-item ok';fb.innerHTML='✓';}
+  else{inp.classList.add('wrong');fb.className='fb-item err';fb.innerHTML=uv.trim()?`✗ → <span class="ans">${cv}</span>`:`→ <span class="ans">${cv}</span>`;}
+}
+
+function nextVerb() {
+  currentVerbIdx++;
+  if(currentVerbIdx>=practiceQueue.length){
+    if(retryQueue.length>0){
+      practiceQueue=shuffle(retryQueue);retryQueue=[];currentVerbIdx=0;correctCount=0;wrongCount=0;wrongList=[];checked=false;isRetry=true;showVerb();
+    } else showResults();
+  } else showVerb();
+}
+
+function showResults() {
+  const total=practiceQueue.length, pct=Math.round((correctCount/total)*100), passed=pct>=80;
+  if(passed){state[currentSection.id]='completed';unlockNext(currentSection.id);saveState();}
+  let wHtml='';
+  if(wrongList.length>0){
+    wHtml=`<div class="wrong-list"><h3>Errori (${wrongList.length})</h3>${wrongList.map(w=>`<div class="wi"><div class="wi-it">${w.verb.it}</div><div class="wi-your">${w.b||'?'} · ${w.p||'?'} · ${w.pp||'?'}</div><div class="wi-ok">${w.verb.base} · ${w.verb.ps} · ${w.verb.pp}</div></div>`).join('')}</div>`;
+  }
+  const btnHtml=passed
+    ?`<button class="btn btn-green" onclick="goMap()">← Torna alla mappa</button>`
+    :`<button class="btn btn-primary" onclick="retryAll()">Riprova</button><button class="btn btn-secondary" onclick="goMap()">← Mappa</button>`;
+  document.getElementById('screen-results').innerHTML=`
+    <div class="results-card">
+      <div class="res-pct ${passed?'pass':'fail'}">${pct}%</div>
+      <div class="res-label">${passed?'✓ Sezione completata!':'✗ Non ancora sufficiente'}</div>
+      <div class="res-threshold">soglia: 80% · ${correctCount}/${total} corretti</div>
+      <div class="res-breakdown"><div class="rb-item"><div class="rb-num g">${correctCount}</div><div class="rb-label">CORRETTI</div></div><div class="rb-item"><div class="rb-num r">${wrongCount}</div><div class="rb-label">ERRORI</div></div></div>
+      ${wHtml}
+      <div class="action-bar" style="justify-content:center;margin-top:24px">${btnHtml}</div>
+    </div>`;
+  showScreen('results');
+}
+
+function retryAll() {
+  if(currentSection.type==='revision'){let v=[];currentSection.revises.forEach(id=>{const sec=ALL_SECTIONS.find(x=>x.id===id);if(sec&&sec.verbs)v=v.concat(sec.verbs);});initPractice(v,currentSection);}
+  else if(currentSection.type==='difficult'){initPractice(getDifficultVerbs(currentSection.revises),currentSection);}
+  else initPractice(currentSection.verbs,currentSection);
+}
+
+function confirmReset(){document.getElementById('resetModal').style.display='flex';}
+function closeModal(){document.getElementById('resetModal').style.display='none';}
+function doReset(){localStorage.removeItem(STATE_KEY);localStorage.removeItem(ERRORS_KEY);state={};errorMap={};closeModal();loadState();goMap();}
+
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(`screen-${id}`).classList.add('active');}
+function goMap(){renderMap();showScreen('map');}
+
+loadState();
+renderMap();
+</script>
+</body>
+</html>
