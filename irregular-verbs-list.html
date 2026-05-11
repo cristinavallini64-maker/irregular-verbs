@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Irregular Verbs – Lista Completa</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0d0d0d; font-family: 'Nunito', sans-serif; color: #fff; padding: 20px; }
+
+  h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.5rem;
+    letter-spacing: 4px;
+    color: #FF0000;
+    margin-bottom: 6px;
+  }
+  .subtitle { color: #aaa; font-size: 0.95rem; margin-bottom: 24px; }
+
+  .search-box {
+    width: 100%;
+    max-width: 400px;
+    padding: 10px 16px;
+    border-radius: 20px;
+    border: 2px solid #FF0000;
+    background: #1a1a1a;
+    color: #fff;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    margin-bottom: 24px;
+    outline: none;
+  }
+  .search-box::placeholder { color: #666; }
+
+  table {
+    width: 100%;
+    max-width: 860px;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+  }
+
+  thead tr { background: #FF0000; }
+  thead th {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 2px;
+    padding: 12px 16px;
+    text-align: left;
+    color: #000;
+  }
+
+  tbody tr { border-bottom: 1px solid #222; transition: background 0.15s; }
+  tbody tr:hover { background: #1a1a1a; }
+  tbody td { padding: 10px 16px; }
+
+  .base { color: #FF6B6B; font-weight: 700; }
+  .past { color: #4ECDC4; font-weight: 700; }
+  .pp   { color: #FFD700; font-weight: 700; }
+  .it   { color: #aaa; }
+
+  .back {
+    display: inline-block;
+    margin-bottom: 20px;
+    color: #000;
+    font-weight: 700;
+    text-decoration: none;
+    font-size: 0.9rem;
+    background: #FF0000;
+    padding: 7px 18px;
+    border-radius: 20px;
+  }
+
+  .count { color: #666; font-size: 0.85rem; margin-bottom: 12px; }
+</style>
+</head>
+<body>
+
+<h1>⚡ Irregular Verbs</h1>
+<p class="subtitle">Lista completa con traduzione italiana</p>
+
+<input type="text" class="search-box" placeholder="🔍 Cerca un verbo..." oninput="filterTable(this.value)">
+<p class="count" id="count"></p>
+
+<table id="verbTable">
+  <thead>
+    <tr>
+      <th>Base form</th>
+      <th>Past simple</th>
+      <th>Past participle</th>
+      <th>Italiano</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td class="base">be</td><td class="past">was/were</td><td class="pp">been</td><td class="it">essere</td></tr>
+    <tr><td class="base">beat</td><td class="past">beat</td><td class="pp">beaten</td><td class="it">battere, picchiare</td></tr>
+    <tr><td class="base">become</td><td class="past">became</td><td class="pp">become</td><td class="it">diventare</td></tr>
+    <tr><td class="base">begin</td><td class="past">began</td><td class="pp">begun</td><td class="it">iniziare, cominciare</td></tr>
+    <tr><td class="base">bend</td><td class="past">bent</td><td class="pp">bent</td><td class="it">piegare</td></tr>
+    <tr><td class="base">bite</td><td class="past">bit</td><td class="pp">bitten</td><td class="it">mordere</td></tr>
+    <tr><td class="base">blow</td><td class="past">blew</td><td class="pp">blown</td><td class="it">soffiare</td></tr>
+    <tr><td class="base">break</td><td class="past">broke</td><td class="pp">broken</td><td class="it">rompere</td></tr>
+    <tr><td class="base">bring</td><td class="past">brought</td><td class="pp">brought</td><td class="it">portare</td></tr>
+    <tr><td class="base">build</td><td class="past">built</td><td class="pp">built</td><td class="it">costruire</td></tr>
+    <tr><td class="base">burn</td><td class="past">burnt/burned</td><td class="pp">burnt/burned</td><td class="it">bruciare</td></tr>
+    <tr><td class="base">buy</td><td class="past">bought</td><td class="pp">bought</td><td class="it">comprare</td></tr>
+    <tr><td class="base">catch</td><td class="past">caught</td><td class="pp">caught</td><td class="it">prendere, acchiappare</td></tr>
+    <tr><td class="base">choose</td><td class="past">chose</td><td class="pp">chosen</td><td class="it">scegliere</td></tr>
+    <tr><td class="base">come</td><td class="past">came</td><td class="pp">come</td><td class="it">venire</td></tr>
+    <tr><td class="base">cost</td><td class="past">cost</td><td class="pp">cost</td><td class="it">costare</td></tr>
+    <tr><td class="base">cut</td><td class="past">cut</td><td class="pp">cut</td><td class="it">tagliare</td></tr>
+    <tr><td class="base">do</td><td class="past">did</td><td class="pp">done</td><td class="it">fare</td></tr>
+    <tr><td class="base">draw</td><td class="past">drew</td><td class="pp">drawn</td><td class="it">disegnare, tirare</td></tr>
+    <tr><td class="base">dream</td><td class="past">dreamt/dreamed</td><td class="pp">dreamt/dreamed</td><td class="it">sognare</td></tr>
+    <tr><td class="base">drink</td><td class="past">drank</td><td class="pp">drunk</td><td class="it">bere</td></tr>
+    <tr><td class="base">drive</td><td class="past">drove</td><td class="pp">driven</td><td class="it">guidare</td></tr>
+    <tr><td class="base">eat</td><td class="past">ate</td><td class="pp">eaten</td><td class="it">mangiare</td></tr>
+    <tr><td class="base">fall</td><td class="past">fell</td><td class="pp">fallen</td><td class="it">cadere</td></tr>
+    <tr><td class="base">feed</td><td class="past">fed</td><td class="pp">fed</td><td class="it">nutrire, dare da mangiare</td></tr>
+    <tr><td class="base">feel</td><td class="past">felt</td><td class="pp">felt</td><td class="it">sentire, provare</td></tr>
+    <tr><td class="base">fight</td><td class="past">fought</td><td class="pp">fought</td><td class="it">combattere, litigare</td></tr>
+    <tr><td class="base">find</td><td class="past">found</td><td class="pp">found</td><td class="it">trovare</td></tr>
+    <tr><td class="base">fly</td><td class="past">flew</td><td class="pp">flown</td><td class="it">volare</td></tr>
+    <tr><td class="base">forget</td><td class="past">forgot</td><td class="pp">forgotten</td><td class="it">dimenticare</td></tr>
+    <tr><td class="base">forgive</td><td class="past">forgave</td><td class="pp">forgiven</td><td class="it">perdonare</td></tr>
+    <tr><td class="base">freeze</td><td class="past">froze</td><td class="pp">frozen</td><td class="it">congelare, gelare</td></tr>
+    <tr><td class="base">get</td><td class="past">got</td><td class="pp">got</td><td class="it">ottenere, prendere</td></tr>
+    <tr><td class="base">give</td><td class="past">gave</td><td class="pp">given</td><td class="it">dare</td></tr>
+    <tr><td class="base">go</td><td class="past">went</td><td class="pp">gone/been</td><td class="it">andare</td></tr>
+    <tr><td class="base">grow</td><td class="past">grew</td><td class="pp">grown</td><td class="it">crescere, coltivare</td></tr>
+    <tr><td class="base">hang</td><td class="past">hung</td><td class="pp">hung</td><td class="it">appendere</td></tr>
+    <tr><td class="base">have</td><td class="past">had</td><td class="pp">had</td><td class="it">avere</td></tr>
+    <tr><td class="base">hear</td><td class="past">heard</td><td class="pp">heard</td><td class="it">sentire, udire</td></tr>
+    <tr><td class="base">hide</td><td class="past">hid</td><td class="pp">hidden</td><td class="it">nascondere</td></tr>
+    <tr><td class="base">hit</td><td class="past">hit</td><td class="pp">hit</td><td class="it">colpire, picchiare</td></tr>
+    <tr><td class="base">hold</td><td class="past">held</td><td class="pp">held</td><td class="it">tenere, contenere</td></tr>
+    <tr><td class="base">hurt</td><td class="past">hurt</td><td class="pp">hurt</td><td class="it">fare male, ferire</td></tr>
+    <tr><td class="base">keep</td><td class="past">kept</td><td class="pp">kept</td><td class="it">tenere, mantenere</td></tr>
+    <tr><td class="base">know</td><td class="past">knew</td><td class="pp">known</td><td class="it">sapere, conoscere</td></tr>
+    <tr><td class="base">lay</td><td class="past">laid</td><td class="pp">laid</td><td class="it">posare, deporre</td></tr>
+    <tr><td class="base">lead</td><td class="past">led</td><td class="pp">led</td><td class="it">guidare, condurre</td></tr>
+    <tr><td class="base">learn</td><td class="past">learnt/learned</td><td class="pp">learnt/learned</td><td class="it">imparare</td></tr>
+    <tr><td class="base">leave</td><td class="past">left</td><td class="pp">left</td><td class="it">lasciare, partire</td></tr>
+    <tr><td class="base">lend</td><td class="past">lent</td><td class="pp">lent</td><td class="it">prestare</td></tr>
+    <tr><td class="base">let</td><td class="past">let</td><td class="pp">let</td><td class="it">lasciare, permettere</td></tr>
+    <tr><td class="base">lie</td><td class="past">lay</td><td class="pp">lain</td><td class="it">sdraiarsi</td></tr>
+    <tr><td class="base">light</td><td class="past">lit</td><td class="pp">lit</td><td class="it">accendere</td></tr>
+    <tr><td class="base">lose</td><td class="past">lost</td><td class="pp">lost</td><td class="it">perdere</td></tr>
+    <tr><td class="base">make</td><td class="past">made</td><td class="pp">made</td><td class="it">fare, fabbricare</td></tr>
+    <tr><td class="base">mean</td><td class="past">meant</td><td class="pp">meant</td><td class="it">significare, voler dire</td></tr>
+    <tr><td class="base">meet</td><td class="past">met</td><td class="pp">met</td><td class="it">incontrare</td></tr>
+    <tr><td class="base">pay</td><td class="past">paid</td><td class="pp">paid</td><td class="it">pagare</td></tr>
+    <tr><td class="base">put</td><td class="past">put</td><td class="pp">put</td><td class="it">mettere</td></tr>
+    <tr><td class="base">read</td><td class="past">read /rɛd/</td><td class="pp">read /rɛd/</td><td class="it">leggere</td></tr>
+    <tr><td class="base">ride</td><td class="past">rode</td><td class="pp">ridden</td><td class="it">cavalcare, andare in bici</td></tr>
+    <tr><td class="base">ring</td><td class="past">rang</td><td class="pp">rung</td><td class="it">suonare, telefonare</td></tr>
+    <tr><td class="base">rise</td><td class="past">rose</td><td class="pp">risen</td><td class="it">alzarsi, sorgere</td></tr>
+    <tr><td class="base">run</td><td class="past">ran</td><td class="pp">run</td><td class="it">correre</td></tr>
+    <tr><td class="base">say</td><td class="past">said</td><td class="pp">said</td><td class="it">dire</td></tr>
+    <tr><td class="base">see</td><td class="past">saw</td><td class="pp">seen</td><td class="it">vedere</td></tr>
+    <tr><td class="base">sell</td><td class="past">sold</td><td class="pp">sold</td><td class="it">vendere</td></tr>
+    <tr><td class="base">send</td><td class="past">sent</td><td class="pp">sent</td><td class="it">mandare, inviare</td></tr>
+    <tr><td class="base">shake</td><td class="past">shook</td><td class="pp">shaken</td><td class="it">scuotere, agitare</td></tr>
+    <tr><td class="base">shine</td><td class="past">shone</td><td class="pp">shone</td><td class="it">brillare, risplendere</td></tr>
+    <tr><td class="base">shoot</td><td class="past">shot</td><td class="pp">shot</td><td class="it">sparare</td></tr>
+    <tr><td class="base">show</td><td class="past">showed</td><td class="pp">shown/showed</td><td class="it">mostrare</td></tr>
+    <tr><td class="base">shut</td><td class="past">shut</td><td class="pp">shut</td><td class="it">chiudere</td></tr>
+    <tr><td class="base">sing</td><td class="past">sang</td><td class="pp">sung</td><td class="it">cantare</td></tr>
+    <tr><td class="base">sink</td><td class="past">sank</td><td class="pp">sunk</td><td class="it">affondare</td></tr>
+    <tr><td class="base">sit</td><td class="past">sat</td><td class="pp">sat</td><td class="it">sedersi</td></tr>
+    <tr><td class="base">sleep</td><td class="past">slept</td><td class="pp">slept</td><td class="it">dormire</td></tr>
+    <tr><td class="base">smell</td><td class="past">smelt/smelled</td><td class="pp">smelt/smelled</td><td class="it">annusare, odorare</td></tr>
+    <tr><td class="base">speak</td><td class="past">spoke</td><td class="pp">spoken</td><td class="it">parlare</td></tr>
+    <tr><td class="base">spell</td><td class="past">spelt/spelled</td><td class="pp">spelt/spelled</td><td class="it">compitare, sillabare</td></tr>
+    <tr><td class="base">spend</td><td class="past">spent</td><td class="pp">spent</td><td class="it">spendere, trascorrere</td></tr>
+    <tr><td class="base">split</td><td class="past">split</td><td class="pp">split</td><td class="it">dividere, spaccare</td></tr>
+    <tr><td class="base">spread</td><td class="past">spread</td><td class="pp">spread</td><td class="it">diffondere, spalmare</td></tr>
+    <tr><td class="base">stand</td><td class="past">stood</td><td class="pp">stood</td><td class="it">stare in piedi</td></tr>
+    <tr><td class="base">steal</td><td class="past">stole</td><td class="pp">stolen</td><td class="it">rubare</td></tr>
+    <tr><td class="base">sweep</td><td class="past">swept</td><td class="pp">swept</td><td class="it">spazzare</td></tr>
+    <tr><td class="base">swim</td><td class="past">swam</td><td class="pp">swum</td><td class="it">nuotare</td></tr>
+    <tr><td class="base">take</td><td class="past">took</td><td class="pp">taken</td><td class="it">prendere, portare</td></tr>
+    <tr><td class="base">teach</td><td class="past">taught</td><td class="pp">taught</td><td class="it">insegnare</td></tr>
+    <tr><td class="base">tear</td><td class="past">tore</td><td class="pp">torn</td><td class="it">strappare</td></tr>
+    <tr><td class="base">tell</td><td class="past">told</td><td class="pp">told</td><td class="it">dire, raccontare</td></tr>
+    <tr><td class="base">think</td><td class="past">thought</td><td class="pp">thought</td><td class="it">pensare</td></tr>
+    <tr><td class="base">throw</td><td class="past">threw</td><td class="pp">thrown</td><td class="it">lanciare, gettare</td></tr>
+    <tr><td class="base">understand</td><td class="past">understood</td><td class="pp">understood</td><td class="it">capire, comprendere</td></tr>
+    <tr><td class="base">wake</td><td class="past">woke</td><td class="pp">woken</td><td class="it">svegliarsi</td></tr>
+    <tr><td class="base">wear</td><td class="past">wore</td><td class="pp">worn</td><td class="it">indossare, portare</td></tr>
+    <tr><td class="base">win</td><td class="past">won</td><td class="pp">won</td><td class="it">vincere</td></tr>
+    <tr><td class="base">write</td><td class="past">wrote</td><td class="pp">written</td><td class="it">scrivere</td></tr>
+  </tbody>
+</table>
+
+<script>
+const rows = document.querySelectorAll('#verbTable tbody tr');
+const countEl = document.getElementById('count');
+
+function updateCount(n) {
+  countEl.textContent = n + ' verbi';
+}
+
+function filterTable(q) {
+  q = q.toLowerCase();
+  let visible = 0;
+  rows.forEach(row => {
+    const text = row.textContent.toLowerCase();
+    if (text.includes(q)) {
+      row.style.display = '';
+      visible++;
+    } else {
+      row.style.display = 'none';
+    }
+  });
+  updateCount(visible);
+}
+
+updateCount(rows.length);
+</script>
+</body>
+</html>
