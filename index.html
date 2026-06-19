@@ -339,6 +339,7 @@ header::after { content:''; position:absolute; bottom:0; left:0; right:0; height
 .btn-save-sm{font-family:'Orbitron',monospace;font-size:9px;font-weight:700;letter-spacing:1px;padding:7px 14px;border-radius:var(--radius-sm);border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.07);color:var(--text-dim);cursor:pointer;transition:all 0.2s;}
 .btn-save-sm:hover{border-color:rgba(255,255,255,0.45);color:#fff;}
 </style>
+<script src="https://cristinavallini64-maker.github.io/grammar-tutor/tracker.js"></script>
 </head>
 <body>
 
@@ -650,9 +651,9 @@ function showStudy(s){
 }
 function startPracticeFromStudy(){initPractice(currentSection.verbs,currentSection);}
 
-let pQ=[],rQ=[],idx=0,ok=0,bad=0,wList=[],checked=false,isRetry=false;
+let pQ=[],rQ=[],idx=0,ok=0,bad=0,wList=[],checked=false,isRetry=false,_firstTotal=0,_firstDone=false;
 function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
-function initPractice(verbs,sec){currentSection=sec;pQ=shuffle(verbs);rQ=[];idx=0;ok=0;bad=0;wList=[];checked=false;isRetry=false;showScreen('practice');showVerb();}
+function initPractice(verbs,sec){currentSection=sec;pQ=shuffle(verbs);rQ=[];idx=0;ok=0;bad=0;wList=[];checked=false;isRetry=false;_firstTotal=pQ.length;_firstDone=false;showScreen('practice');showVerb();}
 function showVerb(){
   checked=false;const v=pQ[idx];
   const pct=pQ.length>0?(idx/pQ.length)*100:0;
@@ -691,7 +692,7 @@ function checkAnswer(){
   document.getElementById('checkBtn').style.display='none';document.getElementById('nextBtn').style.display='inline-block';
 }
 function setF(ii,fi,isOk,uv,cv){const inp=document.getElementById(ii),fb=document.getElementById(fi);if(isOk){inp.classList.add('correct');fb.className='fb-item ok';fb.innerHTML='✓';}else{inp.classList.add('wrong');fb.className='fb-item err';fb.innerHTML=uv.trim()?`✗ → <span class="ans">${cv}</span>`:`→ <span class="ans">${cv}</span>`;}}
-function nextVerb(){idx++;if(idx>=pQ.length){if(rQ.length>0){pQ=shuffle(rQ);rQ=[];idx=0;ok=0;bad=0;wList=[];checked=false;isRetry=true;showVerb();}else showResults();}else showVerb();}
+function nextVerb(){idx++;if(idx>=pQ.length){if(!isRetry&&!_firstDone){_firstDone=true;var _fp=_firstTotal>0?Math.round((ok/_firstTotal)*100):0;if(window.EFTrack)EFTrack.event('punteggio:'+currentSection.title,_fp);}if(rQ.length>0){pQ=shuffle(rQ);rQ=[];idx=0;ok=0;bad=0;wList=[];checked=false;isRetry=true;showVerb();}else showResults();}else showVerb();}
 function showResults(){
   const total=pQ.length,pct=Math.round((ok/total)*100),passed=pct>=80;
   if(passed){state[currentSection.id]='completed';unlockNext(currentSection.id);saveState();setTimeout(()=>{for(let i=0;i<6;i++)setTimeout(()=>spawnBurst(Math.random()*window.innerWidth,Math.random()*window.innerHeight*0.5,['#00f0ff','#00ff88','#ffcc00','#cc77ff'][i%4],22),i*200);},100);}
